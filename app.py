@@ -1,62 +1,36 @@
 from flask import Flask, render_template, jsonify, request
 from datetime import datetime, date
-import math
 import os
+import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "scripts"))
+from moon_calculator import moon_info
 
 app = Flask(__name__)
 
 
-def calculate_moon_phase(year, month, day):
-    """Calculate moon phase data for a given date.
-    Returns phase (0-1), illumination (0-100), age in days, phase name, and days to next full moon.
-    """
-    if month < 3:
-        year -= 1
-        month += 12
+def get_moon_data(year, month, day):
+    """Return moon phase data for the given date using the moon-phase skill calculator."""
+    info = moon_info(f"{year}-{month:02d}-{day:02d}")
 
-    c = 365.25 * year
-    e = 30.6 * month
-    jd = c + e + day - 694039.09
-    total_phase = jd / 29.5305882
-    phase = total_phase - math.floor(total_phase)
-
-    age = phase * 29.53
-    illumination = (1 - math.cos(2 * math.pi * phase)) / 2 * 100
-
-    if phase < 0.0625 or phase > 0.9375:
-        phase_name = "New Moon"
-        emoji = "🌑"
-    elif phase < 0.1875:
-        phase_name = "Waxing Crescent"
-        emoji = "🌒"
-    elif phase < 0.3125:
-        phase_name = "First Quarter"
-        emoji = "🌓"
-    elif phase < 0.4375:
-        phase_name = "Waxing Gibbous"
-        emoji = "🌔"
-    elif phase < 0.5625:
-        phase_name = "Full Moon"
-        emoji = "🌕"
-    elif phase < 0.6875:
-        phase_name = "Waning Gibbous"
-        emoji = "🌖"
-    elif phase < 0.8125:
-        phase_name = "Last Quarter"
-        emoji = "🌗"
+    if info["phase_name"] == "Full Moon":
+        days_to_full = 0
     else:
-        phase_name = "Waning Crescent"
-        emoji = "🌘"
-
-    days_to_full = ((0.5 - phase + 1) % 1) * 29.53
+        query_date = date(year, month, day)
+        days_to_full = 0
+        for p in info["upcoming_phases"]:
+            if p["name"] == "Full Moon":
+                days_to_full = (date.fromisoformat(p["iso"]) - query_date).days
+                break
 
     return {
-        "phase": round(phase, 4),
-        "illumination": round(illumination, 1),
-        "age": round(age, 1),
-        "phase_name": phase_name,
-        "emoji": emoji,
-        "days_to_full": round(days_to_full, 1),
+        "phase":            info["phase_fraction"],
+        "illumination":     info["illumination_percent"],
+        "age":              info["age_days"],
+        "phase_name":       info["phase_name"],
+        "emoji":            info["phase_emoji"],
+        "days_to_full":     days_to_full,
+        "upcoming_phases":  info["upcoming_phases"],
     }
 
 
@@ -126,7 +100,7 @@ PHASE_LESSONS = {
 @app.route("/")
 def index():
     today = date.today()
-    moon_data = calculate_moon_phase(today.year, today.month, today.day)
+    moon_data = get_moon_data(today.year, today.month, today.day)
     lesson = PHASE_LESSONS.get(moon_data["phase_name"], {})
     return render_template("index.html", moon=moon_data, lesson=lesson, facts=MOON_FACTS, today=today.isoformat())
 
@@ -139,7 +113,7 @@ def moon_api():
     except ValueError:
         return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
 
-    moon_data = calculate_moon_phase(d.year, d.month, d.day)
+    moon_data = get_moon_data(d.year, d.month, d.day)
     lesson = PHASE_LESSONS.get(moon_data["phase_name"], {})
     moon_data["lesson"] = lesson
     moon_data["date"] = date_str
