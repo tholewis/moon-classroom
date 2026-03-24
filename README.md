@@ -66,6 +66,10 @@ curl http://localhost:5050/api/moon?date=2025-07-04
 }
 ```
 
+## Documentation
+
+- [Moon Phase Calculation — Developer Reference](docs/moon-phase.md)
+
 ## Stack
 
 - [Flask](https://flask.palletsprojects.com/) — web framework
