@@ -1,169 +1,174 @@
-# Moon Phase Calculation — Developer Reference
+# Moon Phase — Developer Reference
 
-This document explains the `calculate_moon_phase()` function in [app.py](../app.py), how it works internally, and how the rest of the project consumes its output.
+This document covers two related but independent components:
 
----
-
-## Overview
-
-`calculate_moon_phase(year, month, day)` takes a calendar date and returns a dictionary describing the Moon's state on that day. It uses no external libraries — only Python's built-in `math` module. The algorithm is a simplified Julian Date approach accurate to within roughly ±1 day.
+1. **The `moon-phase` Claude skill** — a bundled skill file that gives Claude the ability to answer lunar questions using a precise astronomical calculator.
+2. **The Moon Classroom app calculator** — a lightweight implementation inside `app.py` that powers the web interface.
 
 ---
 
-## The Algorithm
+## 1. The `moon-phase` Skill
 
-### Step 1 — Normalize January and February
+### What it is
 
-```python
-if month < 3:
-    year -= 1
-    month += 12
-```
-
-The Julian Date formula treats January and February as months 13 and 14 of the previous year. This normalization step adjusts the input before the calculation.
-
-### Step 2 — Compute a Simplified Julian Day Number
-
-```python
-c = 365.25 * year
-e = 30.6 * month
-jd = c + e + day - 694039.09
-```
-
-This produces an offset Julian Day Number — a continuous count of days anchored to a known new moon (`694039.09`). The constants `365.25` (average days in a year) and `30.6` (average days in a month in this approximation) come from the standard simplified JD formula.
-
-### Step 3 — Extract the Fractional Phase
-
-```python
-total_phase = jd / 29.5305882
-phase = total_phase - math.floor(total_phase)
-```
-
-Dividing the JD offset by the synodic month (29.5305882 days) gives the total number of lunar cycles elapsed. Subtracting the integer part leaves a value between `0.0` and `1.0` representing where the Moon sits in its current cycle:
-
-| `phase` value | Position in cycle |
-|---|---|
-| `0.0` | New Moon |
-| `0.25` | First Quarter |
-| `0.5` | Full Moon |
-| `0.75` | Last Quarter |
-| `1.0` | New Moon (next cycle) |
-
-### Step 4 — Derive Moon Age and Illumination
-
-```python
-age = phase * 29.53
-illumination = (1 - math.cos(2 * math.pi * phase)) / 2 * 100
-```
-
-- **Age** is simply the phase fraction scaled to the 29.53-day synodic month.
-- **Illumination** uses the cosine formula `(1 - cos(2π × phase)) / 2`, which produces 0% at new moon, 50% at quarter phases, and 100% at full moon — matching observed illumination accurately.
-
-### Step 5 — Map Phase to a Named Stage
-
-The `phase` value is divided into 8 equal segments of 0.125 (one-eighth of the cycle each). The boundaries are centred on each named phase:
+The skill is a `.skill` file (a ZIP archive) located at:
 
 ```
-0.0000 – 0.0625  →  New Moon          🌑
-0.0625 – 0.1875  →  Waxing Crescent   🌒
-0.1875 – 0.3125  →  First Quarter     🌓
-0.3125 – 0.4375  →  Waxing Gibbous    🌔
-0.4375 – 0.5625  →  Full Moon         🌕
-0.5625 – 0.6875  →  Waning Gibbous    🌖
-0.6875 – 0.8125  →  Last Quarter      🌗
-0.8125 – 0.9375  →  Waning Crescent   🌘
-0.9375 – 1.0000  →  New Moon          🌑  (wraps)
+~/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/
+  └── <session-id>/
+        └── <plugin-id>/
+              └── skills/skill-creator/moon-phase.skill
 ```
 
-New Moon wraps at both ends of the range (`phase < 0.0625 or phase > 0.9375`).
+It contains two files:
 
-### Step 6 — Days Until Next Full Moon
-
-```python
-days_to_full = ((0.5 - phase + 1) % 1) * 29.53
+```
+moon-phase/
+├── SKILL.md                      # Skill definition — triggers, workflow, formatting rules
+└── scripts/moon_calculator.py    # Python calculator script
 ```
 
-`0.5` is full moon in normalised phase units. The expression `(0.5 - phase + 1) % 1` computes the forward distance from the current phase to `0.5`, wrapping correctly through the cycle boundary. Multiplying by `29.53` converts to days.
+### SKILL.md
 
-Examples:
-- New Moon (`phase = 0.0`) → `(0.5) % 1 × 29.53 = 14.8 days`
-- Full Moon (`phase = 0.5`) → `(1.0) % 1 × 29.53 = 0.0 days`
-- Waning Gibbous (`phase = 0.6`) → `(0.9) % 1 × 29.53 = 26.6 days`
+`SKILL.md` is the skill's instruction file. It tells Claude:
 
----
+- **When to activate** — any message containing words like "moon", "lunar", "full moon", "new moon", "moonrise", "tides", or requests about night sky visibility.
+- **What to do** — run `moon_calculator.py` via the Bash tool to get real data before responding, then build a response that includes the current phase, upcoming milestone dates, illumination percentage, and contextual information based on what the user asked.
+- **How to format** — lead with the phase emoji and name, keep a warm tone, include an upcoming phases table.
+- **Phase boundary rule** — always use `phase_name` from the script output directly; never infer phase from illumination alone (e.g. 43% illumination the day before First Quarter is still "Waxing Crescent").
 
-## Return Value
+### moon_calculator.py
 
-```python
+The script implements the algorithm from Jean Meeus' *Astronomical Algorithms* (2nd ed., Chapter 49). It is significantly more precise than the simplified approach used in `app.py`.
+
+**Usage:**
+
+```bash
+# Today
+python3 moon_calculator.py
+
+# Specific date
+python3 moon_calculator.py 2025-07-04
+```
+
+**Output (JSON):**
+
+```json
 {
-    "phase":        float,  # 0.0–1.0, position in lunar cycle
-    "illumination": float,  # 0.0–100.0, percentage of visible face lit
-    "age":          float,  # days since last new moon (0–29.53)
-    "phase_name":   str,    # one of the 8 named phases
-    "emoji":        str,    # corresponding moon emoji
-    "days_to_full": float,  # days until next full moon
+  "query_date": "March 24, 2026",
+  "query_date_iso": "2026-03-24",
+  "phase_name": "Waxing Crescent",
+  "phase_emoji": "🌒",
+  "phase_fraction": 0.1732,
+  "illumination_percent": 30.4,
+  "direction": "waxing",
+  "age_days": 5.5,
+  "days_to_next_new_moon": 24.0,
+  "synodic_month_days": 29.530588853,
+  "upcoming_phases": [
+    { "name": "First Quarter", "emoji": "🌓", "date": "March 30, 2026", "iso": "2026-03-30", "time_utc": "02:17 UTC" },
+    { "name": "Full Moon",     "emoji": "🌕", "date": "April 6, 2026",  "iso": "2026-04-06", "time_utc": "18:00 UTC" },
+    { "name": "Last Quarter",  "emoji": "🌗", "date": "April 13, 2026", "iso": "2026-04-13", "time_utc": "10:52 UTC" },
+    { "name": "New Moon",      "emoji": "🌑", "date": "April 20, 2026", "iso": "2026-04-20", "time_utc": "00:11 UTC" }
+  ]
 }
 ```
 
-All floats are rounded: `phase` to 4 decimal places, all others to 1.
+**How the calculator works:**
+
+| Step | What it does |
+|---|---|
+| `to_jd(dt)` | Converts the input date to a Julian Date — a continuous day count used in astronomy |
+| `moon_phase_fraction(jd)` | Measures elapsed days since a known new moon (2000-01-06 18:14 UTC, JD 2451549.757) and divides by the synodic month (29.5306 days) to get a 0.0–1.0 fraction |
+| `illumination_fraction(phase)` | Applies `(1 − cos(2π × phase)) / 2` — gives 0% at new moon, 50% at quarters, 100% at full moon |
+| `phase_name_and_emoji(phase)` | Maps the fraction to one of 8 named phases using tighter boundaries than the app (e.g. First Quarter spans 0.2292–0.2708 rather than equal eighths) |
+| `next_phase_date(jd, target)` | Estimates when the next milestone (new/quarter/full) occurs, then refines it by scanning in 30-minute steps over a ±3-day window |
+| `get_upcoming_phases(jd)` | Calls `next_phase_date` for all four milestones and returns them sorted by date |
 
 ---
 
-## How the Project Uses It
+## 2. The Moon Classroom App Calculator
 
-### Server-Side Rendering (`/`)
+`calculate_moon_phase(year, month, day)` in [app.py](../app.py) is a self-contained implementation that powers both the web page and the `/api/moon` endpoint. It uses no external libraries.
+
+**Algorithm summary:**
 
 ```python
-moon_data = calculate_moon_phase(today.year, today.month, today.day)
-lesson = PHASE_LESSONS.get(moon_data["phase_name"], {})
-return render_template("index.html", moon=moon_data, lesson=lesson, ...)
+# Normalize Jan/Feb as months 13–14 of the prior year
+if month < 3:
+    year -= 1
+    month += 12
+
+# Compute a simplified Julian Day offset anchored to a known new moon
+jd = 365.25 * year + 30.6 * month + day - 694039.09
+
+# Extract fractional cycle position (0.0–1.0)
+phase = (jd / 29.5305882) % 1
+
+# Illumination and age
+illumination = (1 - cos(2π × phase)) / 2 × 100
+age = phase × 29.53
+
+# Days until next full moon (phase 0.5), wrapping correctly
+days_to_full = ((0.5 - phase + 1) % 1) * 29.53
 ```
 
-The index route calls `calculate_moon_phase` for today's date and passes the result directly to the Jinja template. The template uses `moon.phase_name`, `moon.illumination`, `moon.age`, `moon.emoji`, and `moon.days_to_full` to render the hero section, lesson cards, and cycle diagram. The `phase` value is stored in a `data-phase` attribute on `#moon-sphere` and read by JavaScript to render the shadow overlay.
-
-### JSON API (`/api/moon`)
+**Return value:**
 
 ```python
-moon_data = calculate_moon_phase(d.year, d.month, d.day)
-lesson = PHASE_LESSONS.get(moon_data["phase_name"], {})
-moon_data["lesson"] = lesson
-moon_data["date"] = date_str
-return jsonify(moon_data)
+{
+    "phase":        float,   # 0.0–1.0
+    "illumination": float,   # 0–100%
+    "age":          float,   # days since new moon
+    "phase_name":   str,     # one of 8 named phases
+    "emoji":        str,
+    "days_to_full": float,
+}
 ```
-
-The API route accepts any date via `?date=YYYY-MM-DD`, runs the same calculation, appends the matching `PHASE_LESSONS` entry, and returns the combined object as JSON. The Date Explorer on the frontend calls this endpoint on demand and renders the result without a page reload.
-
-### Frontend Moon Visual (`main.js`)
-
-```js
-const moonSphere = document.getElementById('moon-sphere');
-initMoonVisual(parseFloat(moonSphere.dataset.phase));
-```
-
-`initMoonVisual(phase)` positions a dark overlay element over the moon sphere CSS graphic to simulate the correct shadow shape:
-
-- **Waxing (`phase ≤ 0.5`)** — the overlay slides rightward, revealing the lit surface from the left.
-- **Waning (`phase > 0.5`)** — the overlay grows from the right, covering the lit surface.
 
 ---
 
-## Static Content
+## 3. How They Differ
 
-`calculate_moon_phase` only produces the numeric/named phase data. Two static dictionaries in `app.py` provide the educational content:
+| | Skill (`moon_calculator.py`) | App (`app.py`) |
+|---|---|---|
+| **Algorithm basis** | Jean Meeus *Astronomical Algorithms* | Simplified Julian Date approximation |
+| **Phase anchor** | Verified new moon (Jan 6, 2000 18:14 UTC) | Empirical constant (694039.09) |
+| **Synodic month** | 29.530588853 days | 29.5305882 days |
+| **Phase boundaries** | Astronomically proportioned (wider for crescents, narrower for quarters) | Equal eighths (0.125 each) |
+| **Upcoming milestones** | Yes — next 4 milestone dates with UTC times | No |
+| **Wax/wane direction** | Yes (`direction` field) | No |
+| **Date/time aware** | Full UTC datetime | Date only |
+| **Output format** | JSON to stdout | Python dict |
+| **Dependencies** | Python stdlib only | Python stdlib only |
 
-- **`PHASE_LESSONS`** — keyed by `phase_name`, contains `description`, `visibility`, `science`, and `cultural_note` for each of the 8 phases.
-- **`MOON_FACTS`** — a list of standalone fact objects (`title` + `fact`) rendered in the facts grid.
-
-Both are injected into templates at render time and returned inside the `/api/moon` response.
+Both use the same illumination formula: `(1 − cos(2π × phase)) / 2`.
 
 ---
 
-## Accuracy and Limitations
+## 4. How the App Uses the Skill's Output Indirectly
 
-The algorithm is a well-known simplified approximation. It does not account for:
+The app does not call `moon_calculator.py` at runtime. However, the skill and the app share the same data model — both produce a `phase_name` that maps to entries in `PHASE_LESSONS` in `app.py`. If you wanted to replace the app's calculator with the skill's more precise version, the integration would be:
 
-- The Moon's elliptical orbit (varies actual illumination slightly from the cosine model)
-- Time of day (treats each date as a single point rather than a moment in time)
-- Time zones (calculations are date-based, not timestamp-based)
+```python
+import subprocess, json
 
-For educational purposes these differences are negligible. For astronomical precision, use a library such as [ephem](https://rhodesmill.org/pyephem/) or [astropy](https://www.astropy.org/).
+def calculate_moon_phase(year, month, day):
+    result = subprocess.run(
+        ["python3", "/path/to/moon_calculator.py", f"{year}-{month:02d}-{day:02d}"],
+        capture_output=True, text=True
+    )
+    data = json.loads(result.stdout)
+    return {
+        "phase":        data["phase_fraction"],
+        "illumination": data["illumination_percent"],
+        "age":          data["age_days"],
+        "phase_name":   data["phase_name"],
+        "emoji":        data["phase_emoji"],
+        "days_to_full": next(
+            (p for p in data["upcoming_phases"] if p["name"] == "Full Moon"), {}
+        ).get("iso", ""),
+    }
+```
+
+This would add upcoming milestone dates and UTC-accurate phase boundaries to the app while keeping the existing template and API interface unchanged.
