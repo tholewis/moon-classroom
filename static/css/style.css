@@ -1,0 +1,566 @@
+/* ───── Reset & Base ───── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --night: #06080f;
+  --deep-space: #0d1117;
+  --cosmos: #161b27;
+  --nebula: #1f2740;
+  --moon-silver: #e8eaed;
+  --moon-glow: #c8d6e5;
+  --moon-crater: #b0bec5;
+  --lunar-gold: #f5c518;
+  --lunar-blue: #4fc3f7;
+  --lunar-purple: #9c7fe3;
+  --text-primary: #e8eaed;
+  --text-secondary: #9aa5b4;
+  --text-dim: #5a6578;
+  --card-bg: rgba(255,255,255,0.04);
+  --card-border: rgba(255,255,255,0.08);
+  --glow-soft: rgba(200, 214, 229, 0.15);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--night);
+  color: var(--text-primary);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ───── Star Field ───── */
+.stars {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.star {
+  position: absolute;
+  background: #fff;
+  border-radius: 50%;
+  animation: twinkle var(--duration) ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  from { opacity: var(--min-opacity); transform: scale(1); }
+  to   { opacity: var(--max-opacity); transform: scale(1.4); }
+}
+
+/* ───── Header ───── */
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 1rem 2rem;
+  background: rgba(6, 8, 15, 0.7);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--card-border);
+}
+
+.header-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.logo-icon {
+  font-size: 1.5rem;
+  color: var(--moon-silver);
+  text-shadow: 0 0 12px var(--moon-silver);
+}
+
+.logo-text {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--moon-silver);
+}
+
+nav {
+  display: flex;
+  gap: 2rem;
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.875rem;
+  letter-spacing: 0.04em;
+  transition: color 0.2s;
+}
+
+.nav-link:hover {
+  color: var(--moon-silver);
+}
+
+/* ───── Sections ───── */
+main {
+  position: relative;
+  z-index: 1;
+  padding-top: 5rem;
+}
+
+.section {
+  padding: 5rem 2rem;
+}
+
+.section-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.section-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--lunar-blue);
+  margin-bottom: 0.75rem;
+}
+
+.section-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 600;
+  color: var(--moon-silver);
+  margin-bottom: 1rem;
+  letter-spacing: 0.03em;
+}
+
+.section-desc {
+  color: var(--text-secondary);
+  font-size: 1.05rem;
+  margin-bottom: 3rem;
+  max-width: 600px;
+}
+
+/* ───── Hero Section ───── */
+.hero-section {
+  min-height: calc(100vh - 5rem);
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--card-border);
+}
+
+.hero-section .section-inner {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4rem;
+  align-items: center;
+  width: 100%;
+}
+
+.hero-title {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 700;
+  color: var(--moon-silver);
+  margin-bottom: 0.75rem;
+  text-shadow: 0 0 30px var(--glow-soft);
+  line-height: 1.1;
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+.days-to-full {
+  font-size: 1rem;
+  color: var(--text-dim);
+}
+
+.days-to-full strong {
+  color: var(--lunar-gold);
+}
+
+/* ───── Moon Visual ───── */
+.moon-visual-wrapper {
+  position: relative;
+  width: 240px;
+  height: 240px;
+  flex-shrink: 0;
+}
+
+.moon-glow {
+  position: absolute;
+  inset: -30px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,214,229,0.12) 0%, transparent 70%);
+  animation: pulse-glow 4s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-glow {
+  from { opacity: 0.6; transform: scale(1); }
+  to   { opacity: 1; transform: scale(1.05); }
+}
+
+.moon-sphere {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow:
+    0 0 40px rgba(200, 214, 229, 0.2),
+    inset -15px -15px 30px rgba(0,0,0,0.4);
+}
+
+.moon-surface {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 30% 30%, #f0f2f5 0%, #d0d8e0 40%, #b0bec5 100%);
+}
+
+/* Crater overlays */
+.moon-surface::before {
+  content: '';
+  position: absolute;
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.1);
+  top: 35%; left: 30%;
+  box-shadow:
+    40px 30px 0 8px rgba(0,0,0,0.07),
+    -20px 60px 0 5px rgba(0,0,0,0.07),
+    70px -10px 0 12px rgba(0,0,0,0.05),
+    10px 100px 0 4px rgba(0,0,0,0.06);
+}
+
+.moon-shadow-overlay {
+  position: absolute;
+  inset: 0;
+  background: var(--night);
+  border-radius: 50%;
+  transform-origin: center;
+}
+
+/* ───── Explorer Section ───── */
+.explorer-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  padding: 2.5rem;
+}
+
+.date-picker-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.date-input {
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid var(--card-border);
+  background: rgba(255,255,255,0.05);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  color-scheme: dark;
+}
+
+.date-input:focus {
+  border-color: var(--lunar-blue);
+  box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.15);
+}
+
+.btn-primary {
+  padding: 0.75rem 2rem;
+  border-radius: 12px;
+  border: 1px solid var(--lunar-blue);
+  background: rgba(79, 195, 247, 0.1);
+  color: var(--lunar-blue);
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  background: rgba(79, 195, 247, 0.2);
+  box-shadow: 0 0 20px rgba(79, 195, 247, 0.15);
+}
+
+.explorer-result {
+  margin-top: 2.5rem;
+  display: flex;
+  gap: 2.5rem;
+  align-items: flex-start;
+  border-top: 1px solid var(--card-border);
+  padding-top: 2.5rem;
+}
+
+.explorer-result.hidden {
+  display: none;
+}
+
+.result-moon {
+  font-size: 5rem;
+  line-height: 1;
+  flex-shrink: 0;
+  text-shadow: 0 0 20px rgba(255,255,255,0.2);
+}
+
+.result-details h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.6rem;
+  color: var(--moon-silver);
+  margin-bottom: 1.25rem;
+}
+
+.result-stats {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+
+.stat-value {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--lunar-gold);
+}
+
+.lesson-snippet {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  border-left: 2px solid var(--lunar-purple);
+  padding-left: 1rem;
+}
+
+/* ───── Lesson Grid ───── */
+.lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.lesson-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 2rem;
+  transition: transform 0.25s, border-color 0.25s;
+}
+
+.lesson-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255,255,255,0.15);
+}
+
+.lesson-icon {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+}
+
+.lesson-card h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  color: var(--lunar-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+}
+
+.lesson-card p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* ───── Cycle Diagram ───── */
+.cycle-diagram {
+  position: relative;
+  width: 460px;
+  height: 460px;
+  margin: 3rem auto 0;
+}
+
+.cycle-ring {
+  position: absolute;
+  inset: 60px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255,255,255,0.1);
+}
+
+.cycle-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #4a90d9 0%, #1e4a8a 100%);
+  box-shadow: 0 0 20px rgba(74, 144, 217, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.cycle-phase {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 70px;
+  text-align: center;
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--deg))
+    translateY(-170px)
+    rotate(calc(-1 * var(--deg)));
+}
+
+.cycle-moon {
+  font-size: 2rem;
+  line-height: 1;
+  transition: transform 0.2s;
+}
+
+.cycle-label {
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  margin-top: 0.4rem;
+  white-space: nowrap;
+  letter-spacing: 0.03em;
+}
+
+.cycle-phase[data-current="true"] .cycle-moon {
+  filter: drop-shadow(0 0 10px rgba(200,214,229,0.8));
+  transform: scale(1.3);
+}
+
+.cycle-phase[data-current="true"] .cycle-label {
+  color: var(--lunar-gold);
+  font-weight: 600;
+}
+
+/* ───── Facts Grid ───── */
+.facts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.fact-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 16px;
+  padding: 1.75rem;
+  transition: transform 0.25s, border-color 0.25s;
+}
+
+.fact-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255,255,255,0.14);
+}
+
+.fact-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  color: var(--lunar-purple);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.75rem;
+}
+
+.fact-body {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.75;
+}
+
+/* ───── Footer ───── */
+.site-footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  padding: 2rem;
+  border-top: 1px solid var(--card-border);
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+/* ───── Responsive ───── */
+@media (max-width: 768px) {
+  .hero-section .section-inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 2.5rem;
+  }
+
+  .moon-visual-wrapper {
+    margin: 0 auto;
+  }
+
+  nav {
+    display: none;
+  }
+
+  .explorer-result {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cycle-diagram {
+    width: 320px;
+    height: 320px;
+  }
+
+  .cycle-phase {
+    transform:
+      translate(-50%, -50%)
+      rotate(var(--deg))
+      translateY(-120px)
+      rotate(calc(-1 * var(--deg)));
+  }
+}

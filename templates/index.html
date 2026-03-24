@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moon Classroom</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+
+    <header class="site-header">
+        <div class="header-content">
+            <div class="logo">
+                <span class="logo-icon">☽</span>
+                <span class="logo-text">Moon Classroom</span>
+            </div>
+            <nav>
+                <a href="#today" class="nav-link">Today</a>
+                <a href="#explorer" class="nav-link">Explorer</a>
+                <a href="#lesson" class="nav-link">Lesson</a>
+                <a href="#facts" class="nav-link">Facts</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- Hero / Today Section -->
+        <section id="today" class="section hero-section">
+            <div class="section-inner">
+                <div class="hero-text">
+                    <p class="section-label">Tonight's Sky</p>
+                    <h1 class="hero-title">{{ moon.emoji }} {{ moon.phase_name }}</h1>
+                    <p class="hero-subtitle">{{ moon.illumination }}% illuminated · {{ moon.age }} days old</p>
+                    {% if moon.days_to_full > 0.5 %}
+                    <p class="days-to-full">Full moon in <strong>{{ moon.days_to_full }} days</strong></p>
+                    {% else %}
+                    <p class="days-to-full">It's <strong>full moon</strong> tonight!</p>
+                    {% endif %}
+                </div>
+                <div class="moon-visual-wrapper">
+                    <div class="moon-glow"></div>
+                    <div class="moon-sphere" id="moon-sphere">
+                        <div class="moon-surface"></div>
+                        <div class="moon-shadow-overlay" id="shadow-overlay"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Date Explorer -->
+        <section id="explorer" class="section">
+            <div class="section-inner">
+                <h2 class="section-title">Date Explorer</h2>
+                <p class="section-desc">Pick any date to learn about the moon phase that day.</p>
+                <div class="explorer-card">
+                    <div class="date-picker-row">
+                        <input type="date" id="date-input" value="{{ today }}" class="date-input">
+                        <button id="explore-btn" class="btn-primary">Explore</button>
+                    </div>
+                    <div id="explorer-result" class="explorer-result hidden">
+                        <div class="result-moon" id="result-moon-emoji"></div>
+                        <div class="result-details">
+                            <h3 id="result-phase-name"></h3>
+                            <div class="result-stats">
+                                <div class="stat">
+                                    <span class="stat-label">Illumination</span>
+                                    <span class="stat-value" id="result-illumination"></span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Moon Age</span>
+                                    <span class="stat-value" id="result-age"></span>
+                                </div>
+                                <div class="stat">
+                                    <span class="stat-label">Days to Full Moon</span>
+                                    <span class="stat-value" id="result-days-to-full"></span>
+                                </div>
+                            </div>
+                            <div class="lesson-snippet" id="result-description"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase Lesson -->
+        <section id="lesson" class="section">
+            <div class="section-inner">
+                <p class="section-label">Tonight's Lesson</p>
+                <h2 class="section-title">{{ moon.phase_name }}</h2>
+                {% if lesson %}
+                <div class="lesson-grid">
+                    <div class="lesson-card">
+                        <div class="lesson-icon">🔭</div>
+                        <h3>What's Happening</h3>
+                        <p>{{ lesson.description }}</p>
+                    </div>
+                    <div class="lesson-card">
+                        <div class="lesson-icon">👁</div>
+                        <h3>Visibility</h3>
+                        <p>{{ lesson.visibility }}</p>
+                    </div>
+                    <div class="lesson-card">
+                        <div class="lesson-icon">⚗️</div>
+                        <h3>The Science</h3>
+                        <p>{{ lesson.science }}</p>
+                    </div>
+                    <div class="lesson-card">
+                        <div class="lesson-icon">🌍</div>
+                        <h3>Cultural Significance</h3>
+                        <p>{{ lesson.cultural_note }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- Phase Cycle Diagram -->
+        <section class="section">
+            <div class="section-inner">
+                <h2 class="section-title">The Lunar Cycle</h2>
+                <p class="section-desc">The Moon completes one full orbit around Earth every 29.5 days.</p>
+                <div class="cycle-diagram">
+                    <div class="cycle-ring"></div>
+                    <div class="cycle-center">Earth</div>
+                    {% set phases = [
+                        ("🌑", "New Moon", 0),
+                        ("🌒", "Waxing Crescent", 45),
+                        ("🌓", "First Quarter", 90),
+                        ("🌔", "Waxing Gibbous", 135),
+                        ("🌕", "Full Moon", 180),
+                        ("🌖", "Waning Gibbous", 225),
+                        ("🌗", "Last Quarter", 270),
+                        ("🌘", "Waning Crescent", 315)
+                    ] %}
+                    {% for emoji, name, deg in phases %}
+                    <div class="cycle-phase" style="--deg: {{ deg }}deg;"
+                         {% if name == moon.phase_name %}data-current="true"{% endif %}>
+                        <div class="cycle-moon">{{ emoji }}</div>
+                        <div class="cycle-label">{{ name }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <!-- Moon Facts -->
+        <section id="facts" class="section">
+            <div class="section-inner">
+                <h2 class="section-title">Moon Facts</h2>
+                <p class="section-desc">Fascinating things you might not know about Earth's only natural satellite.</p>
+                <div class="facts-grid">
+                    {% for fact in facts %}
+                    <div class="fact-card">
+                        <h3 class="fact-title">{{ fact.title }}</h3>
+                        <p class="fact-body">{{ fact.fact }}</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <p>Moon Classroom · Powered by lunar mathematics &amp; Python</p>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    <script>
+        // Initialize moon visual with today's phase data
+        initMoonVisual({{ moon.phase }});
+    </script>
+</body>
+</html>
