@@ -1,17 +1,21 @@
 from flask import Flask, render_template, jsonify, request
 from datetime import datetime, date
 import os
-import sys
-
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), "scripts"))
-from moon_calculator import moon_info
+import json
+import subprocess
 
 app = Flask(__name__)
+
+CALCULATOR = os.path.join(os.path.dirname(__file__), "scripts", "moon_calculator.py")
 
 
 def get_moon_data(year, month, day):
     """Return moon phase data for the given date using the moon-phase skill calculator."""
-    info = moon_info(f"{year}-{month:02d}-{day:02d}")
+    result = subprocess.run(
+        ["python3", CALCULATOR, f"{year}-{month:02d}-{day:02d}"],
+        capture_output=True, text=True, check=True
+    )
+    info = json.loads(result.stdout)
 
     if info["phase_name"] == "Full Moon":
         days_to_full = 0
