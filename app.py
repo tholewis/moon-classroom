@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify, request
 from datetime import datetime, date
 import math
+import os
 
 app = Flask(__name__)
 
@@ -20,7 +21,7 @@ def calculate_moon_phase(year, month, day):
     phase = total_phase - math.floor(total_phase)
 
     age = phase * 29.53
-    illumination = abs(math.sin(math.pi * phase) * 100)
+    illumination = (1 - math.cos(2 * math.pi * phase)) / 2 * 100
 
     if phase < 0.0625 or phase > 0.9375:
         phase_name = "New Moon"
@@ -146,4 +147,4 @@ def moon_api():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5050)
+    app.run(debug=os.environ.get("FLASK_DEBUG", "False") == "True", port=5050)

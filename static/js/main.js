@@ -74,7 +74,7 @@ document.getElementById('explore-btn').addEventListener('click', async () => {
   btn.disabled = true;
 
   try {
-    const res = await fetch(`/api/moon?date=${dateVal}`);
+    const res = await fetch(`/api/moon?date=${encodeURIComponent(dateVal)}`);
     if (!res.ok) throw new Error('API error');
     const data = await res.json();
 
@@ -98,10 +98,27 @@ document.getElementById('explore-btn').addEventListener('click', async () => {
     result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   } catch (e) {
     console.error(e);
+    const result = document.getElementById('explorer-result');
+    result.classList.add('hidden');
+    const desc = document.getElementById('result-description');
+    desc.textContent = 'Something went wrong. Please try again.';
+    desc.style.display = 'block';
+    result.classList.remove('hidden');
   } finally {
     btn.textContent = 'Explore';
     btn.disabled = false;
   }
+});
+
+// Initialize moon visual from data attribute
+const moonSphere = document.getElementById('moon-sphere');
+if (moonSphere) {
+  initMoonVisual(parseFloat(moonSphere.dataset.phase));
+}
+
+// Apply --deg CSS variable for cycle diagram phases
+document.querySelectorAll('.cycle-phase').forEach(el => {
+  el.style.setProperty('--deg', el.dataset.deg + 'deg');
 });
 
 // Allow pressing Enter in date input

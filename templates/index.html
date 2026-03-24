@@ -44,7 +44,7 @@
                 </div>
                 <div class="moon-visual-wrapper">
                     <div class="moon-glow"></div>
-                    <div class="moon-sphere" id="moon-sphere">
+                    <div class="moon-sphere" id="moon-sphere" data-phase="{{ moon.phase }}">
                         <div class="moon-surface"></div>
                         <div class="moon-shadow-overlay" id="shadow-overlay"></div>
                     </div>
@@ -59,6 +59,7 @@
                 <p class="section-desc">Pick any date to learn about the moon phase that day.</p>
                 <div class="explorer-card">
                     <div class="date-picker-row">
+                        <label for="date-input" class="sr-only">Select a date</label>
                         <input type="date" id="date-input" value="{{ today }}" class="date-input">
                         <button id="explore-btn" class="btn-primary">Explore</button>
                     </div>
@@ -138,7 +139,7 @@
                         ("🌘", "Waning Crescent", 315)
                     ] %}
                     {% for emoji, name, deg in phases %}
-                    <div class="cycle-phase" style="--deg: {{ deg }}deg;"
+                    <div class="cycle-phase" data-deg="{{ deg }}"
                          {% if name == moon.phase_name %}data-current="true"{% endif %}>
                         <div class="cycle-moon">{{ emoji }}</div>
                         <div class="cycle-label">{{ name }}</div>
@@ -171,9 +172,5 @@
     </footer>
 
     <script src="/static/js/main.js"></script>
-    <script>
-        // Initialize moon visual with today's phase data
-        initMoonVisual({{ moon.phase }});
-    </script>
 </body>
 </html>
