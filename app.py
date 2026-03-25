@@ -1,33 +1,12 @@
-from flask import Flask, render_template, jsonify, request, Response, stream_with_context
+from flask import Flask, render_template, jsonify, request
 from datetime import datetime, date
 import os
-import re
 import json
 import subprocess
-import anthropic
 
 app = Flask(__name__)
 
 CALCULATOR = os.path.join(os.path.dirname(__file__), "scripts", "moon_calculator.py")
-
-# Load the moon-phase skill instructions at startup
-_skill_path = os.path.join(os.path.dirname(__file__), ".claude", "skills", "moon-phase", "SKILL.md")
-with open(_skill_path) as _f:
-    _skill_raw = _f.read()
-# Strip YAML frontmatter
-_skill_instructions = re.sub(r"^---.*?---\s*", "", _skill_raw, flags=re.DOTALL).strip()
-
-SYSTEM_PROMPT_BASE = (
-    _skill_instructions
-    + "\n\n## Topic Scope\n\n"
-    "You are Moon Classroom's AI lunar guide. Only discuss topics related to the moon, "
-    "lunar phases, astronomy, space, tides, night sky observation, and related subjects. "
-    "If the user asks about anything unrelated, warmly let them know that Moon Classroom "
-    "focuses on lunar and space topics, and invite them to ask a moon-related question instead."
-    "\n\n## Live Moon Data\n\n"
-    "Today's moon data has been pre-fetched — you do not need to run the calculator script. "
-    "Use the data below directly:\n\n"
-)
 
 
 def get_moon_data(year, month, day):
@@ -122,6 +101,13 @@ PHASE_LESSONS = {
 }
 
 
+@app.route("/learn")
+def learn():
+    today = date.today()
+    moon_data = get_moon_data(today.year, today.month, today.day)
+    return render_template("learn.html", moon=moon_data, today=today.isoformat())
+
+
 @app.route("/")
 def index():
     today = date.today()
@@ -144,44 +130,6 @@ def moon_api():
     moon_data["date"] = date_str
     return jsonify(moon_data)
 
-
-@app.route("/ask")
-def ask():
-    return render_template("ask.html")
-
-
-@app.route("/api/ask", methods=["POST"])
-def ask_api():
-    data = request.get_json()
-    question = data.get("question", "").strip()
-    history = data.get("history", [])
-
-    if not question:
-        return jsonify({"error": "No question provided."}), 400
-
-    api_key = os.environ.get("ANTHROPIC_API_KEY")
-    if not api_key:
-        return jsonify({"error": "ANTHROPIC_API_KEY is not configured on the server."}), 500
-
-    moon_result = subprocess.run(
-        ["python3", CALCULATOR], capture_output=True, text=True, check=True
-    )
-    system = SYSTEM_PROMPT_BASE + f"```json\n{moon_result.stdout}\n```"
-    messages = history + [{"role": "user", "content": question}]
-
-    def generate():
-        client = anthropic.Anthropic(api_key=api_key)
-        with client.messages.stream(
-            model="claude-opus-4-6",
-            max_tokens=1024,
-            system=system,
-            messages=messages,
-        ) as stream:
-            for text in stream.text_stream:
-                yield f"data: {json.dumps({'text': text})}\n\n"
-        yield "data: [DONE]\n\n"
-
-    return Response(stream_with_context(generate()), content_type="text/event-stream")
 
 
 if __name__ == "__main__":

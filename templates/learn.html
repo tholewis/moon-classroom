@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn — Moon Classroom</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        /* ── Progress bar ── */
+        .read-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--lunar-blue), var(--lunar-purple));
+            z-index: 200;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        /* ── Learn hero ── */
+        .learn-hero {
+            padding: 5rem 2rem 3rem;
+            text-align: center;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .learn-hero .section-label {
+            margin-bottom: 0.5rem;
+        }
+
+        .learn-hero-title {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.8rem, 5vw, 3rem);
+            font-weight: 700;
+            color: var(--moon-silver);
+            margin-bottom: 0.75rem;
+            text-shadow: 0 0 30px var(--glow-soft);
+        }
+
+        .learn-hero-sub {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* ── Section nav pills ── */
+        .learn-nav {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .learn-nav-pill {
+            padding: 0.55rem 1.4rem;
+            border-radius: 999px;
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            letter-spacing: 0.03em;
+            transition: all 0.2s;
+        }
+
+        .learn-nav-pill:hover {
+            border-color: var(--lunar-blue);
+            color: var(--lunar-blue);
+        }
+
+        .learn-nav-pill.active {
+            border-color: var(--lunar-blue);
+            background: rgba(79, 195, 247, 0.1);
+            color: var(--lunar-blue);
+        }
+
+        /* ── Article layout ── */
+        .learn-section {
+            padding: 4rem 2rem;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .learn-section:last-child {
+            border-bottom: none;
+        }
+
+        .learn-article {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        .section-meta {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-number {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--lunar-blue);
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            padding: 0.3rem 0.75rem;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+
+        .read-time {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .learn-article h2 {
+            font-family: 'Cinzel', serif;
+            font-size: clamp(1.5rem, 3.5vw, 2.2rem);
+            color: var(--moon-silver);
+            margin-bottom: 2rem;
+            line-height: 1.2;
+        }
+
+        .learn-article h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.05rem;
+            color: var(--lunar-blue);
+            margin: 2.5rem 0 0.75rem;
+            letter-spacing: 0.04em;
+        }
+
+        .learn-article p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.85;
+            margin-bottom: 1.25rem;
+        }
+
+        .learn-article p:last-child {
+            margin-bottom: 0;
+        }
+
+        .learn-article strong {
+            color: var(--moon-silver);
+            font-weight: 600;
+        }
+
+        /* ── Pull quote / callout ── */
+        .callout {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-left: 3px solid var(--lunar-purple);
+            border-radius: 0 12px 12px 0;
+            padding: 1.25rem 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .callout p {
+            margin-bottom: 0;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .callout strong {
+            color: var(--lunar-gold);
+        }
+
+        /* ── Key numbers grid ── */
+        .key-numbers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .key-number {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        .key-number-value {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--lunar-gold);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .key-number-label {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        /* ── Live moon callout ── */
+        .live-moon-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(79, 195, 247, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 2.5rem 0;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .live-moon-emoji {
+            font-size: 3.5rem;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+
+        .live-moon-info {
+            flex: 1;
+        }
+
+        .live-badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--lunar-blue);
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            margin-bottom: 0.5rem;
+        }
+
+        .live-moon-phase {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            color: var(--moon-silver);
+        }
+
+        .live-moon-stats {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .live-moon-stats span {
+            color: var(--lunar-gold);
+        }
+
+        /* ── Phase cards grid ── */
+        .phase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+            gap: 0.875rem;
+            margin: 2rem 0;
+        }
+
+        .phase-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.1rem;
+            text-align: center;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .phase-card.current-phase {
+            border-color: rgba(79, 195, 247, 0.4);
+            background: rgba(79, 195, 247, 0.05);
+        }
+
+        .phase-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .phase-card-emoji {
+            font-size: 2rem;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .phase-card-name {
+            font-family: 'Cinzel', serif;
+            font-size: 0.7rem;
+            color: var(--lunar-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.4rem;
+        }
+
+        .phase-card-desc {
+            font-size: 0.78rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        .current-tag {
+            display: inline-block;
+            font-size: 0.6rem;
+            background: rgba(79, 195, 247, 0.15);
+            color: var(--lunar-blue);
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+            margin-top: 0.3rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        /* ── Tide comparison ── */
+        .tide-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .tide-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.1rem;
+        }
+
+        .tide-card-title {
+            font-family: 'Cinzel', serif;
+            font-size: 0.8rem;
+            color: var(--lunar-purple);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.5rem;
+        }
+
+        .tide-card p {
+            font-size: 0.85rem;
+            margin-bottom: 0;
+        }
+
+        /* ── Tasks section ── */
+        .tasks-intro {
+            margin-bottom: 2.5rem;
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .task-item {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+
+        .task-item:hover {
+            border-color: rgba(255,255,255,0.12);
+        }
+
+        .task-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1.25rem 1.5rem;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .task-number {
+            font-family: 'Cinzel', serif;
+            font-size: 0.75rem;
+            color: var(--lunar-blue);
+            background: rgba(79, 195, 247, 0.1);
+            border: 1px solid rgba(79, 195, 247, 0.2);
+            border-radius: 8px;
+            padding: 0.25rem 0.6rem;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        .task-question {
+            flex: 1;
+            font-size: 0.975rem;
+            color: var(--text-primary);
+            line-height: 1.65;
+        }
+
+        .task-toggle {
+            font-size: 1.1rem;
+            color: var(--text-dim);
+            flex-shrink: 0;
+            transition: transform 0.25s;
+            line-height: 1;
+            margin-top: 0.1rem;
+        }
+
+        .task-item.open .task-toggle {
+            transform: rotate(180deg);
+        }
+
+        .task-answer {
+            display: none;
+            padding: 0 1.5rem 1.25rem 1.5rem;
+            padding-left: calc(1.5rem + 2.5rem + 1rem); /* align with question text */
+        }
+
+        .task-item.open .task-answer {
+            display: block;
+        }
+
+        .answer-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--lunar-gold);
+            margin-bottom: 0.4rem;
+        }
+
+        .task-answer p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 0;
+            border-left: 2px solid var(--lunar-gold);
+            padding-left: 0.875rem;
+        }
+
+        .task-answer p strong {
+            color: var(--lunar-gold);
+        }
+
+        /* ── Completion banner ── */
+        .completion-banner {
+            margin-top: 3rem;
+            background: var(--card-bg);
+            border: 1px solid rgba(156, 127, 227, 0.3);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .completion-banner .big-emoji {
+            font-size: 3rem;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .completion-banner h3 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            color: var(--moon-silver);
+            margin-bottom: 0.5rem;
+        }
+
+        .completion-banner p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0;
+        }
+
+        /* ── Back link ── */
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--moon-silver);
+        }
+
+        @media (max-width: 768px) {
+            .live-moon-card {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .tide-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .task-answer {
+                padding-left: 1.5rem;
+            }
+
+            .key-numbers {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="read-progress" id="read-progress"></div>
+    <div class="stars" id="stars"></div>
+
+    <header class="site-header">
+        <div class="header-content">
+            <div class="logo">
+                <a href="/" class="logo-link">
+                    <span class="logo-icon">☽</span>
+                    <span class="logo-text">Moon Classroom</span>
+                </a>
+            </div>
+            <nav>
+                <a href="/#today" class="nav-link">Today</a>
+                <a href="/#explorer" class="nav-link">Explorer</a>
+                <a href="/#lesson" class="nav-link">Lesson</a>
+                <a href="/#facts" class="nav-link">Facts</a>
+                <a href="/learn" class="nav-link nav-link-active">Learn</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero -->
+        <div class="learn-hero">
+            <p class="section-label">Lunar Learning Guide</p>
+            <h1 class="learn-hero-title">Understanding the Moon</h1>
+            <p class="learn-hero-sub">Three sections &nbsp;·&nbsp; ~15 minutes total &nbsp;·&nbsp; Knowledge check included</p>
+            <nav class="learn-nav" aria-label="Jump to section">
+                <a href="#section-moon" class="learn-nav-pill" data-section="section-moon">① The Moon</a>
+                <a href="#section-phases" class="learn-nav-pill" data-section="section-phases">② Moon Phases</a>
+                <a href="#section-tasks" class="learn-nav-pill" data-section="section-tasks">③ Apply Your Knowledge</a>
+            </nav>
+        </div>
+
+        <!-- ─────────────────────────────────────────── -->
+        <!-- SECTION 1: THE MOON                        -->
+        <!-- ─────────────────────────────────────────── -->
+        <section id="section-moon" class="learn-section">
+            <article class="learn-article">
+                <div class="section-meta">
+                    <span class="section-number">Section 1</span>
+                    <span class="read-time">~5 minute read</span>
+                </div>
+                <h2>Understanding Our Moon</h2>
+
+                <p>The Moon is Earth's only natural satellite and our nearest cosmic neighbor — a world that has fascinated humanity since before recorded history. Despite being the most studied object beyond Earth, the Moon continues to yield scientific surprises. This section covers what the Moon is, where it came from, and why it has such a profound influence on our planet.</p>
+
+                <h3>Origins: The Giant Impact</h3>
+
+                <p>The Moon was not always there. About <strong>4.5 billion years ago</strong> — only 100 million years after Earth itself formed — a catastrophic collision reshaped the inner solar system. A Mars-sized rocky body called <strong>Theia</strong> struck the proto-Earth at an oblique angle. The impact was so violent that both bodies partially vaporized, ejecting billions of tonnes of molten rock into orbit around Earth. Within roughly 10,000 years, gravitational forces pulled that debris together into what would become the Moon.</p>
+
+                <p>This explanation is known as the <strong>Giant Impact Hypothesis</strong>. The strongest evidence comes from the Apollo missions, which returned 382 kg of lunar rock. Analysis revealed that the Moon's oxygen isotope ratios almost perfectly match Earth's — exactly what you would expect if both bodies formed from the same pool of shattered material.</p>
+
+                <h3>Physical Profile</h3>
+
+                <p>The Moon is a substantial world in its own right. With a diameter of <strong>3,474 km</strong> — roughly one quarter of Earth's 12,742 km — it is the fifth largest moon in the solar system and, proportionally, the largest natural satellite relative to its host planet (with the exception of Pluto's moon Charon).</p>
+
+                <div class="key-numbers">
+                    <div class="key-number">
+                        <span class="key-number-value">3,474 km</span>
+                        <span class="key-number-label">Diameter</span>
+                    </div>
+                    <div class="key-number">
+                        <span class="key-number-value">384,400 km</span>
+                        <span class="key-number-label">Avg. distance from Earth</span>
+                    </div>
+                    <div class="key-number">
+                        <span class="key-number-value">1/6 g</span>
+                        <span class="key-number-label">Surface gravity</span>
+                    </div>
+                    <div class="key-number">
+                        <span class="key-number-value">29.5 days</span>
+                        <span class="key-number-label">Synodic month</span>
+                    </div>
+                </div>
+
+                <p>Surface gravity is approximately <strong>one sixth of Earth's</strong> — strong enough to hold a thin layer of gas called an exosphere (composed mainly of helium, neon, and hydrogen swept in by the solar wind), but far too weak to retain a true atmosphere. An astronaut on the Moon weighs about one sixth of their Earth weight.</p>
+
+                <p>The Moon's average distance from Earth is <strong>384,400 km</strong> — roughly 30 Earths lined up in a row. But this distance is not fixed. The Moon's orbit is slightly elliptical: at its closest point (perigee) it comes within <strong>356,500 km</strong>, and at its farthest (apogee) it reaches <strong>406,700 km</strong>. This variation affects the Moon's apparent size in the sky, with real consequences for tides and the visual drama of a full moon.</p>
+
+                <h3>The Lunar Surface</h3>
+
+                <p>Two main types of terrain cover the Moon. The dark, relatively smooth areas are called <strong>maria</strong> (Latin for "seas" — early astronomers mistook them for actual oceans). They are ancient solidified lava plains formed billions of years ago when volcanic activity was far more intense. Mare Tranquillitatis — the Sea of Tranquillity — is where Apollo 11 touched down on 20 July 1969.</p>
+
+                <p>The bright, heavily cratered regions are called <strong>terrae</strong> or highlands. These are the original lunar crust, scarred by billions of years of meteorite impacts. Because the Moon has no plate tectonics, no liquid water, and no wind erosion, craters persist essentially forever. The youngest large craters have bright streaks of ejected material called <strong>rays</strong> radiating outward — most visible around craters like Tycho.</p>
+
+                <p>The entire surface is blanketed by <strong>regolith</strong> — a layer of fine grey dust created by eons of micrometeorite bombardment. This powder clings electrostatically to everything and was one of the largest practical challenges for Apollo astronauts.</p>
+
+                <h3>Tidal Locking: Why We See Only One Face</h3>
+
+                <p>You have probably noticed that the Moon always presents the same face to Earth. This is a direct consequence of physics called <strong>tidal locking</strong>. Early in the Moon's history, Earth's gravity exerted tidal forces on the slightly deformable Moon, creating a small bulge. The gravitational pull on that bulge acted as a brake, gradually slowing the Moon's rotation until its rotation period matched its orbital period exactly.</p>
+
+                <p>Now the Moon rotates once on its axis every <strong>27.3 days</strong> — precisely the time it takes to complete one orbit of Earth. The same hemisphere always faces us. The far side, often called the "dark side" (a misnomer — it receives exactly as much sunlight as the near side), was completely unknown to humanity until 1959 when the Soviet Luna 3 probe photographed it for the first time.</p>
+
+                <div class="callout">
+                    <p><strong>A subtle note:</strong> The Moon does wobble slightly due to variations in its orbital speed, allowing us to glimpse an additional 9% of the surface over time. In total, careful observers can see about 59% of the Moon's surface from Earth — not just 50%.</p>
+                </div>
+
+                <h3>Temperature and the Absent Atmosphere</h3>
+
+                <p>Without a real atmosphere to moderate temperatures, the Moon's surface experiences brutal extremes. The two-week lunar day heats the surface to <strong>127°C (260°F)</strong>. The two-week lunar night plunges to <strong>-173°C (-280°F)</strong>. There is no wind, no weather, and no sound. The sky is perpetually black even while the Sun blazes overhead.</p>
+
+                <p>There is one unexpected phenomenon, however: <strong>moonquakes</strong>. Seismometers placed by Apollo missions detected regular tremors beneath the surface, caused by tidal stresses from Earth's gravity squeezing the Moon as its distance varies, and by the slow cooling and contraction of the lunar interior. Shallow moonquakes can last for up to ten minutes — far longer than typical earthquakes, because the dry, cold lunar rock transmits vibrations with very little dampening.</p>
+
+                <h3>The Moon's Influence on Earth</h3>
+
+                <p>The Moon is not merely a passive spectator in the night sky. Its gravity has profoundly shaped Earth and may even be responsible for the conditions that allowed complex life to arise.</p>
+
+                <p>The most familiar effect is the <strong>tides</strong>. The Moon's gravitational pull is slightly stronger on the side of Earth closest to it, creating a bulge of ocean water on that side. By a combination of inertia and orbital mechanics, a second bulge forms on the opposite side of Earth. As Earth rotates through these two bulges every 24 hours and 50 minutes, most coastal locations experience two high tides and two low tides per day. The tidal range — the difference between high and low water — varies significantly by location and phase of the Moon.</p>
+
+                <p>More subtly, the Moon helps <strong>stabilize Earth's axial tilt</strong> at approximately 23.5 degrees. Without this gravitational anchor, computer models suggest Earth's tilt could wander chaotically between near zero and over 85 degrees over millions of years — causing catastrophic swings in climate that might make complex life far less likely to persist.</p>
+            </article>
+        </section>
+
+        <!-- ─────────────────────────────────────────── -->
+        <!-- SECTION 2: MOON PHASES                     -->
+        <!-- ─────────────────────────────────────────── -->
+        <section id="section-phases" class="learn-section">
+            <article class="learn-article">
+                <div class="section-meta">
+                    <span class="section-number">Section 2</span>
+                    <span class="read-time">~5 minute read</span>
+                </div>
+                <h2>Moon Phases</h2>
+
+                <p>If you have watched the Moon across several nights, you have witnessed one of nature's most reliable cycles — the lunar phases. The Moon does not actually change shape. What changes is our view of how much of its sunlit surface faces us. Understanding why requires thinking in three dimensions about the positions of the Sun, Earth, and Moon.</p>
+
+                <!-- Live moon data callout -->
+                <div class="live-moon-card">
+                    <div class="live-moon-emoji">{{ moon.emoji }}</div>
+                    <div class="live-moon-info">
+                        <span class="live-badge">Live · Tonight</span>
+                        <div class="live-moon-phase">{{ moon.phase_name }}</div>
+                        <div class="live-moon-stats">
+                            <span>{{ moon.illumination }}%</span> illuminated &nbsp;·&nbsp;
+                            <span>{{ moon.age }}</span> days into the cycle
+                            {% if moon.days_to_full > 0 %}
+                            &nbsp;·&nbsp; Full moon in <span>{{ moon.days_to_full }} days</span>
+                            {% else %}
+                            &nbsp;·&nbsp; <span>Full moon tonight</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <h3>The Geometry of Phases</h3>
+
+                <p>The Moon produces no light of its own. It shines because it reflects sunlight — much like a mirror angled toward the observer. At any given moment, exactly half of the Moon is illuminated by the Sun. The phase we see from Earth depends entirely on the <strong>angle between the Sun, Earth, and Moon</strong>.</p>
+
+                <p>When the Moon lies between Earth and the Sun, its lit hemisphere faces away from us and we see only darkness — this is the <strong>New Moon</strong>. As the Moon advances along its orbit (counterclockwise when viewed from above Earth's north pole), we begin to see progressively more of the illuminated side. At the opposite extreme, when Earth lies between Sun and Moon, we see the entire lit hemisphere — the <strong>Full Moon</strong>. The Moon then continues past full, and the lit portion shrinks back toward new moon to complete the cycle.</p>
+
+                <h3>The Synodic Month: 29.5 Days</h3>
+
+                <p>The Moon's orbital period — the time for one full orbit of Earth — is <strong>27.3 days</strong>. But the lunar cycle as we experience it (new moon to new moon) takes <strong>29 days, 12 hours, and 44 minutes</strong>. Why the difference? Because Earth is simultaneously orbiting the Sun. By the time the Moon completes one orbit, Earth has moved roughly 30 degrees along its own path. The Moon must travel that extra distance before it returns to the same position relative to both Earth <em>and</em> the Sun — which is what determines the phase we see. This longer period is called the <strong>synodic month</strong>.</p>
+
+                <h3>The Eight Phases</h3>
+
+                <p>The continuous cycle is divided into eight named phases. Each marks a recognizable position in the Moon's orbit and a characteristic appearance in the sky.</p>
+
+                <div class="phase-grid">
+                    {% set phases_data = [
+                        ("🌑", "New Moon", "Fully dark. The Moon is between Earth and Sun. Not visible at night.", 0),
+                        ("🌒", "Waxing Crescent", "A growing sliver on the right side. Low in the western sky after sunset.", 1),
+                        ("🌓", "First Quarter", "Right half lit. High in the sky at sunset, sets near midnight.", 2),
+                        ("🌔", "Waxing Gibbous", "More than half lit and growing. Rises afternoon, visible most of the night.", 3),
+                        ("🌕", "Full Moon", "Fully illuminated. Rises at sunset, visible all night.", 4),
+                        ("🌖", "Waning Gibbous", "More than half lit and shrinking. Rises after sunset, visible into morning.", 5),
+                        ("🌗", "Last Quarter", "Left half lit. Rises midnight, visible through the morning.", 6),
+                        ("🌘", "Waning Crescent", "A shrinking sliver on the left side. Visible in the east before dawn.", 7)
+                    ] %}
+                    {% for emoji, name, desc, idx in phases_data %}
+                    <div class="phase-card {% if name == moon.phase_name %}current-phase{% endif %}">
+                        <span class="phase-card-emoji">{{ emoji }}</span>
+                        <div class="phase-card-name">{{ name }}</div>
+                        <div class="phase-card-desc">{{ desc }}</div>
+                        {% if name == moon.phase_name %}
+                        <span class="current-tag">Tonight</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <h3>Waxing, Waning, and the Terminator</h3>
+
+                <p>Two essential vocabulary words: <strong>waxing</strong> means the lit portion is growing (New Moon to Full Moon), and <strong>waning</strong> means it is shrinking (Full Moon back to New Moon). A helpful mnemonic: waxing is like a candle wax building up — growing.</p>
+
+                <p>The <strong>terminator</strong> is the curved boundary between the lit and unlit portions of the Moon's surface. At the quarter phases, it appears as a perfectly straight line, creating sharp shadows that reveal crater rims and mountain ranges in dramatic relief. This makes the quarter phases — not the full moon — the best time to observe the lunar surface through a telescope or binoculars.</p>
+
+                <div class="callout">
+                    <p><strong>Northern vs. Southern hemisphere:</strong> Observers in the southern hemisphere see the Moon flipped upside down relative to observers in the north. What appears to be a "right-side lit" waxing crescent in the northern hemisphere appears left-side lit in the southern hemisphere. The phases are identical — only the orientation differs.</p>
+                </div>
+
+                <h3>Phases and the Tides</h3>
+
+                <p>The relationship between phases and tides is one of the most practical consequences of the lunar cycle. Both the Moon and the Sun exert gravitational forces on Earth's oceans, but the Moon's is roughly 2.2 times stronger because of its proximity.</p>
+
+                <div class="tide-comparison">
+                    <div class="tide-card">
+                        <div class="tide-card-title">🌕 🌑 Spring Tides</div>
+                        <p>Occur at <strong>New Moon and Full Moon</strong>, when Earth, Moon, and Sun are roughly aligned. The gravitational pulls of the Moon and Sun reinforce each other, producing higher high tides and lower low tides than average.</p>
+                    </div>
+                    <div class="tide-card">
+                        <div class="tide-card-title">🌓 🌗 Neap Tides</div>
+                        <p>Occur at <strong>First Quarter and Last Quarter</strong>, when the Sun and Moon are at right angles relative to Earth. Their gravitational pulls partially cancel, resulting in a smaller tidal range — shallower highs and higher lows.</p>
+                    </div>
+                </div>
+
+                <p>The word "spring" in spring tides comes from the German <em>springen</em> (to leap), referring to the water springing up — not the season. Spring tides occur twice per month regardless of the time of year.</p>
+
+                <h3>Supermoons, Blue Moons, and Lunar Eclipses</h3>
+
+                <p>Because the Moon's orbit is elliptical, some Full Moons occur when the Moon is near <strong>perigee</strong> — its closest point to Earth. These are commonly called <strong>supermoons</strong>. A Full Moon at perigee can appear up to <strong>14% larger in diameter</strong> and <strong>30% brighter</strong> than a Full Moon at apogee. The difference is subtle to the naked eye, but the extra brightness is perceptible and striking in long-exposure photography.</p>
+
+                <p>A <strong>Blue Moon</strong>, in modern popular usage, is the second Full Moon within a single calendar month. Because the synodic month (29.5 days) is shorter than most calendar months (30–31 days), a blue moon occurs roughly every <strong>2.7 years</strong>. Despite the evocative name, the Moon does not typically appear blue.</p>
+
+                <p>A <strong>lunar eclipse</strong> occurs when Earth passes directly between the Sun and a Full Moon, casting its shadow onto the Moon. During a total lunar eclipse, the Moon takes on a deep red hue — sometimes called a "Blood Moon." This coloring happens because Earth's atmosphere refracts the Sun's light, scattering away blue wavelengths while bending red light around the edge of Earth and onto the Moon's surface. It is the same optical effect that makes sunrises and sunsets appear red. Lunar eclipses are entirely safe to observe with the naked eye and unfold slowly over several hours.</p>
+            </article>
+        </section>
+
+        <!-- ─────────────────────────────────────────── -->
+        <!-- SECTION 3: APPLY YOUR KNOWLEDGE            -->
+        <!-- ─────────────────────────────────────────── -->
+        <section id="section-tasks" class="learn-section">
+            <article class="learn-article">
+                <div class="section-meta">
+                    <span class="section-number">Section 3</span>
+                    <span class="read-time">Knowledge check</span>
+                </div>
+                <h2>Apply Your Knowledge</h2>
+
+                <div class="tasks-intro">
+                    <p>The questions below test your understanding of both sections. Some ask you to recall key facts; others ask you to reason through scenarios using what you have learned. Tap a question to reveal the answer — but try to answer it yourself first.</p>
+                </div>
+
+                <div class="task-list">
+
+                    <div class="task-item">
+                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                            <span class="task-number">01</span>
+                            <span class="task-question">What is the scientific theory that explains how the Moon formed, and what evidence supports it?</span>
+                            <span class="task-toggle">▾</span>
+                        </div>
+                        <div class="task-answer">
+                            <div class="answer-label">Answer</div>
+                            <p>The <strong>Giant Impact Hypothesis</strong>: approximately 4.5 billion years ago, a Mars-sized body called Theia collided with the early Earth. The collision ejected vast amounts of molten material into orbit, which coalesced into the Moon. The strongest evidence comes from lunar rocks returned by the Apollo missions — the Moon's oxygen isotope ratios almost exactly match Earth's, indicating both bodies formed from the same pool of material.</p>
+                        </div>
+                    </div>
+
+                    <div class="task-item">
+                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                            <span class="task-number">02</span>
+                            <span class="task-question">The Moon's orbital period is 27.3 days, but the lunar cycle (new moon to new moon) takes 29.5 days. Why is there a difference?</span>
+                            <span class="task-toggle">▾</span>
+                        </div>
+                        <div class="task-answer">
+                            <div class="answer-label">Answer</div>
+                            <p>Because <strong>Earth is also orbiting the Sun</strong>. By the time the Moon completes one full orbit around Earth (27.3 days), Earth has moved roughly 30 degrees further along its own orbit. The Moon must travel that additional distance before it lines up with Earth and the Sun in the same way again — which is what determines the phase we see. This extra ~2.2 days gives us the 29.5-day synodic month.</p>
+                        </div>
+                    </div>
+
+                    <div class="task-item">
+                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                            <span class="task-number">03</span>
+                            <span class="task-question">True or false: The far side of the Moon ("the dark side") never receives sunlight.</span>
+                            <span class="task-toggle">▾</span>
+                        </div>
+                        <div class="task-answer">
+                            <div class="answer-label">Answer</div>
+                            <p><strong>False.</strong> "Dark side" is a popular but misleading name. The far side receives exactly as much sunlight as the near side — it simply always faces away from Earth. It is permanently <em>unseen</em> from Earth's surface, not permanently dark. The Luna 3 spacecraft first photographed it in 1959.</p>
+                        </div>
+                    </div>
+
+                    <div class="task-item">
+                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                            <span class="task-number">04</span>
+                            <span class="task-question">What is tidal locking? Use the Moon as your example and describe what it means for an observer on Earth.</span>
+                            <span class="task-toggle">▾</span>
+                        </div>
+                        <div class="task-answer">
+                            <div class="answer-label">Answer</div>
+                            <p><strong>Tidal locking</strong> occurs when a body's rotation period is slowed by gravitational friction until it equals its orbital period. Earth's gravity gradually slowed the Moon's spin over millions of years. Now the Moon rotates once every 27.3 days — exactly its orbital period — so the same hemisphere always faces Earth. From Earth's surface, we can only directly observe about 59% of the Moon's total surface (slightly more than 50% due to orbital wobbling called libration).</p>
+                        </div>
+                    </div>
+
+                    <div class="task-item">
+                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                            <span class="task-number">05</span>
+                            <span class="task-question">During which two moon phases do spring tides occur, and why are they stronger than neap tides?</span>
+                            <span class="task-toggle">▾</span>
+                        </div>
+                        <div class="task-answer">
+                            <div class="answer-label">Answer</div>
+                            <p>Spring tides occur at the <strong>New Moon and Full Moon</strong>. At these phases, the Sun, Earth, and Moon are roughly aligned, so the gravitational pull of the Sun and Moon act in the same direction and <strong>reinforce each other</strong>, producing higher high tides and lower low tides. At the quarter phases, the Sun and Moon are at right angles to each other relative to Earth, so their pulls partially cancel out — producing the weaker neap tides.</p>
+                        </div>
+                    </div>
+
+                    <div class="task-item">
+                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                            <span class="task-number">06</span>
+                            <span class="task-question">The Moon's illumination is approximately 50% and the right half is lit (as seen from the northern hemisphere). The lit portion has been growing for the past week. What is the phase name, and when does this Moon set?</span>
+                            <span class="task-toggle">▾</span>
+                        </div>
+                        <div class="task-answer">
+                            <div class="answer-label">Answer</div>
+                            <p><strong>First Quarter</strong> (also called "half moon"). The name refers to the Moon being one quarter of the way through its orbit from New Moon — not to the fraction illuminated. Because the Moon is waxing (illumination growing), the right half is lit in the northern hemisphere. The First Quarter Moon is typically <strong>high in the sky at sunset and sets near midnight</strong>.</p>
+                        </div>
+                    </div>
+
+                    <div class="task-item">
+                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                            <span class="task-number">07</span>
+                            <span class="task-question">Why is the First or Last Quarter Moon — not the Full Moon — considered the best time to observe lunar craters through a telescope?</span>
+                            <span class="task-toggle">▾</span>
+                        </div>
+                        <div class="task-answer">
+                            <div class="answer-label">Answer</div>
+                            <p>At the quarter phases, the <strong>terminator</strong> (the boundary between lit and unlit portions) runs across the surface, and sunlight strikes features at a very shallow angle. This creates long shadows that dramatically reveal the rims, walls, and floors of craters. At Full Moon, the Sun shines almost directly down from above; there are few shadows and the surface appears flat and washed out — beautiful, but poor for detail. The terminator is also perfectly straight at the quarter phases, making it easy to identify.</p>
+                        </div>
+                    </div>
+
+                    <div class="task-item">
+                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                            <span class="task-number">08</span>
+                            <span class="task-question">What causes the reddish colour of the Moon during a total lunar eclipse?</span>
+                            <span class="task-toggle">▾</span>
+                        </div>
+                        <div class="task-answer">
+                            <div class="answer-label">Answer</div>
+                            <p>During a total lunar eclipse, Earth's atmosphere acts like a lens, <strong>refracting sunlight around the edge of Earth</strong> and onto the Moon. The atmosphere scatters away shorter blue wavelengths (the same process that makes the sky blue) and allows longer red and orange wavelengths to bend through and illuminate the Moon. This is essentially the combined light of all of Earth's sunrises and sunsets projected onto the lunar surface — the same optical effect that makes the horizon glow red at dawn and dusk.</p>
+                        </div>
+                    </div>
+
+                    <div class="task-item">
+                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                            <span class="task-number">09</span>
+                            <span class="task-question">You step outside just after sunset and see a crescent moon low in the western sky with the lit portion on the right side. Is the Moon waxing or waning? What is the phase name, and will the Moon be visible tomorrow night at the same time?</span>
+                            <span class="task-toggle">▾</span>
+                        </div>
+                        <div class="task-answer">
+                            <div class="answer-label">Answer</div>
+                            <p>The Moon is <strong>waxing</strong> — the lit right-side crescent in the western sky after sunset is a classic <strong>Waxing Crescent</strong>. The Moon will <strong>yes</strong> be visible tomorrow night at the same time, and it will be slightly larger and higher in the sky as it continues growing toward First Quarter. A waning crescent, by contrast, would rise in the east before dawn and would not be visible in the western sky after sunset.</p>
+                        </div>
+                    </div>
+
+                    <div class="task-item">
+                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                            <span class="task-number">10</span>
+                            <span class="task-question">Look at tonight's live moon data shown in Section 2. Based on the phase name displayed, predict whether tomorrow's illumination percentage will be higher or lower than tonight's, and explain why.</span>
+                            <span class="task-toggle">▾</span>
+                        </div>
+                        <div class="task-answer">
+                            <div class="answer-label">Answer</div>
+                            <p>
+                                {% if moon.phase_name in ["New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbous"] %}
+                                Tonight is a <strong>{{ moon.phase_name }}</strong> — a waxing phase. Tomorrow's illumination will be <strong>higher</strong>, because the Moon is progressing from New Moon toward Full Moon and the lit fraction grows a little each night.
+                                {% elif moon.phase_name == "Full Moon" %}
+                                Tonight is a <strong>Full Moon</strong> — the peak. Tomorrow's illumination will be <strong>slightly lower</strong>, as the Moon has passed its maximum and will begin the waning half of its cycle.
+                                {% else %}
+                                Tonight is a <strong>{{ moon.phase_name }}</strong> — a waning phase. Tomorrow's illumination will be <strong>lower</strong>, because the Moon is progressing from Full Moon back toward New Moon and the lit fraction decreases a little each night.
+                                {% endif %}
+                                This is because the Moon's illumination changes continuously as it orbits Earth, driven by the changing angle between the Sun, Moon, and Earth.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="completion-banner">
+                    <span class="big-emoji">🌕</span>
+                    <h3>You have completed the Lunar Learning Guide</h3>
+                    <p>Return to the homepage to see tonight's live phase data, explore the date explorer, or revisit the phase cycle diagram.</p>
+                    <br>
+                    <a href="/" class="back-link">← Back to Moon Classroom</a>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>Moon Classroom &nbsp;·&nbsp; Powered by lunar mathematics &amp; Python</p>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    <script>
+        // Reading progress bar
+        const progressBar = document.getElementById('read-progress');
+        window.addEventListener('scroll', () => {
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (window.scrollY / docHeight) * 100;
+            progressBar.style.width = Math.min(scrolled, 100) + '%';
+        });
+
+        // Highlight active section in nav pills
+        const sections = ['section-moon', 'section-phases', 'section-tasks'];
+        const pills = document.querySelectorAll('.learn-nav-pill');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    pills.forEach(p => p.classList.remove('active'));
+                    const active = document.querySelector(`.learn-nav-pill[data-section="${entry.target.id}"]`);
+                    if (active) active.classList.add('active');
+                }
+            });
+        }, { threshold: 0.3 });
+
+        sections.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) observer.observe(el);
+        });
+
+        // Task accordion
+        document.querySelectorAll('.task-header').forEach(header => {
+            const activate = () => {
+                const item = header.closest('.task-item');
+                const isOpen = item.classList.contains('open');
+                item.classList.toggle('open', !isOpen);
+                header.setAttribute('aria-expanded', String(!isOpen));
+            };
+            header.addEventListener('click', activate);
+            header.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(); }
+            });
+        });
+    </script>
+</body>
+</html>
