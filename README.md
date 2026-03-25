@@ -11,6 +11,7 @@ An interactive lunar education app built with Flask. Learn about moon phases, il
 - **Phase Lessons** — for each phase: what's happening, visibility, the science, and cultural notes
 - **Lunar Cycle Diagram** — visual overview of all 8 phases with the current one highlighted
 - **Moon Facts** — curated facts about Earth's only natural satellite
+- **Learn** — a long-form guided article covering lunar science (origins, physical profile, tidal locking) and moon phases, with live tonight's moon data embedded inline and a knowledge-check quiz at the end
 
 ## Getting Started
 
