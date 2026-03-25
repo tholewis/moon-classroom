@@ -1,6 +1,8 @@
 # Moon Classroom
 
-![Moon Classroom screenshot](docs/screenshot.png)
+![Moon Classroom homepage](docs/screenshot.png)
+
+![Moon Classroom Learn page](docs/screenshot-learn.png)
 
 An interactive lunar education app built with Flask. Learn about moon phases, illumination data, visibility, science, and cultural significance — updated daily based on real lunar calculations.
 
