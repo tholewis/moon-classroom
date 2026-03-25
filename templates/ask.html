@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ask — Moon Classroom</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -59,6 +60,9 @@
             scrollbar-width: thin;
             scrollbar-color: var(--card-border) transparent;
         }
+        .chat-messages::-webkit-scrollbar { width: 4px; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
+        .chat-messages::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
 
         .message {
             display: flex;
@@ -239,7 +243,7 @@
     <header class="site-header">
         <div class="header-content">
             <div class="logo">
-                <a href="/" style="display:flex;align-items:center;gap:0.6rem;text-decoration:none;">
+                <a href="/" class="logo-link">
                     <span class="logo-icon">☽</span>
                     <span class="logo-text">Moon Classroom</span>
                 </a>
@@ -249,7 +253,7 @@
                 <a href="/#explorer" class="nav-link">Explorer</a>
                 <a href="/#lesson" class="nav-link">Lesson</a>
                 <a href="/#facts" class="nav-link">Facts</a>
-                <a href="/ask" class="nav-link" style="color:var(--moon-silver);">Ask</a>
+                <a href="/ask" class="nav-link nav-link-active">Ask</a>
             </nav>
         </div>
     </header>

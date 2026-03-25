@@ -128,6 +128,17 @@ nav {
   color: var(--moon-silver);
 }
 
+.nav-link-active {
+  color: var(--moon-silver);
+}
+
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+}
+
 /* ───── Sections ───── */
 main {
   position: relative;
