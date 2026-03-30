@@ -17,7 +17,10 @@ An interactive lunar education app built with Flask. Learn about moon phases, il
 
 ## Getting Started
 
-**Requirements:** Python 3.9+
+**Prerequisites:**
+- Python 3.9 or later (`python3 --version` to check)
+- pip (bundled with Python 3.9+)
+- No database or external services required
 
 ```bash
 # Install dependencies
@@ -29,7 +32,7 @@ python app.py
 
 Then open [http://localhost:5050](http://localhost:5050) in your browser.
 
-To enable debug mode:
+To enable debug mode (auto-reload on file changes):
 
 ```bash
 FLASK_DEBUG=True python app.py
@@ -37,37 +40,53 @@ FLASK_DEBUG=True python app.py
 
 ## API
 
-The app exposes a simple JSON endpoint:
+The app exposes a JSON endpoint for moon phase data.
 
 ```
 GET /api/moon?date=YYYY-MM-DD
 ```
 
-**Example:**
+The `date` parameter is optional and defaults to today.
+
+**Example request:**
 
 ```bash
-curl http://localhost:5050/api/moon?date=2025-07-04
+curl "http://localhost:5050/api/moon?date=2025-07-04"
 ```
 
-**Response:**
+**Example response:**
 
 ```json
 {
+  "date": "2025-07-04",
   "phase": 0.2871,
   "phase_name": "First Quarter",
   "emoji": "🌓",
   "illumination": 72.5,
   "age": 8.5,
-  "days_to_full": 6.4,
-  "date": "2025-07-04",
+  "days_to_full": 6,
+  "upcoming_phases": [
+    { "name": "Full Moon",     "emoji": "🌕", "date": "July 10, 2025", "iso": "2025-07-10", "time_utc": "20:37 UTC" },
+    { "name": "Last Quarter",  "emoji": "🌗", "date": "July 17, 2025", "iso": "2025-07-17", "time_utc": "11:38 UTC" },
+    { "name": "New Moon",      "emoji": "🌑", "date": "July 24, 2025", "iso": "2025-07-24", "time_utc": "19:11 UTC" },
+    { "name": "First Quarter", "emoji": "🌓", "date": "August 1, 2025","iso": "2025-08-01", "time_utc": "02:41 UTC" }
+  ],
   "lesson": {
-    "description": "...",
-    "visibility": "...",
-    "science": "...",
-    "cultural_note": "..."
+    "description": "The Moon has completed one quarter of its orbit. Exactly half of the visible face is lit.",
+    "visibility": "High in the sky at sunset, sets around midnight.",
+    "science": "The terminator — the line between light and dark — is straight, and lunar craters are most visible here.",
+    "cultural_note": "Called 'first quarter' because the Moon has traveled one quarter of its orbit."
   }
 }
 ```
+
+**Error response** (invalid date format):
+
+```json
+{ "error": "Invalid date format. Use YYYY-MM-DD." }
+```
+
+HTTP status `400`.
 
 ## Moon Phase Skill
 
@@ -75,7 +94,7 @@ The app is built around a [Claude Code skill](.claude/skills/moon-phase/) that e
 
 **`SKILL.md`** — instructions that tell Claude how to act as a lunar guide: when to invoke the calculator, how to interpret its output, what topics to cover (phases, tides, gardening, photography timing, folklore), and how to format responses. It also defines the phase→emoji mapping and guards against common mistakes like inferring a phase name from illumination percentage alone.
 
-**`scripts/moon_calculator.py`** — a self-contained Python script that does the actual astronomy. It implements the Julian Date conversion and phase fraction formula from Jean Meeus' *Astronomical Algorithms* (2nd ed.), with no external dependencies. It accepts an optional `YYYY-MM-DD` argument (defaults to today) and prints a JSON object:
+**`scripts/moon_calculator.py`** — a self-contained Python script that does the actual astronomy. It implements the Julian Date (JD) conversion and phase fraction formula from Jean Meeus' *Astronomical Algorithms* (2nd ed.), with no external dependencies. It accepts an optional `YYYY-MM-DD` argument (defaults to today) and prints a JSON object:
 
 ```bash
 python3 scripts/moon_calculator.py              # today
@@ -113,11 +132,13 @@ The Flask app invokes the calculator as a subprocess via `get_moon_data()` in [a
 
 ## Documentation
 
-- [Moon Phase Calculation — Developer Reference](docs/moon-phase.md)
+- [CLAUDE.md](CLAUDE.md) — Claude Code guidance: repo layout, conventions, running the app
+- [llms.txt](llms.txt) — AI-optimized project summary and API reference
+- [Moon Phase Calculation — Developer Reference](docs/moon-phase.md) — full reference for the skill architecture, calculator output schema, and field mapping
 
 ## Stack
 
-- [Flask](https://flask.palletsprojects.com/) — web framework
+- [Flask](https://flask.palletsprojects.com/) 3.1.3 — web framework
 - Vanilla JavaScript — date explorer and moon visual
 - CSS custom properties + animations — star field and moon rendering
 - Pure Python math — lunar phase calculations (no external astronomy libraries)

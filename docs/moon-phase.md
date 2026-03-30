@@ -1,3 +1,12 @@
+---
+title: Moon Phase — Developer Reference
+description: Architecture, calculator output schema, field mapping, and route reference for the moon-phase Claude Code skill and the Moon Classroom Flask app.
+category: reference
+version: "1.0"
+last_updated: 2026-03-30
+audience: developers
+---
+
 # Moon Phase — Developer Reference
 
 This document covers two related but distinct components:
@@ -124,6 +133,8 @@ else:
 
 **`GET /`** — renders the homepage for today's date. Passes `moon`, `lesson`, `facts`, and `today` to `index.html`.
 
+**`GET /learn`** — renders the long-form educational article. Passes `moon` and `today` to `learn.html`. The live moon data is embedded in the Moon Phases section as a callout card.
+
 **`GET /api/moon?date=YYYY-MM-DD`** — returns full moon data as JSON, including the `lesson` from `PHASE_LESSONS` and all `upcoming_phases`. Defaults to today if no date is provided. Returns `400` for invalid date formats.
 
 ### Static content
@@ -143,7 +154,8 @@ Moon-Classroom/
 ├── scripts/
 │   └── moon_calculator.py          # Calculator script (used by app via subprocess)
 ├── templates/
-│   └── index.html                  # Jinja2 template
+│   ├── index.html                  # Homepage Jinja2 template
+│   └── learn.html                  # Long-form education article template
 ├── static/
 │   ├── css/style.css
 │   └── js/main.js
@@ -155,7 +167,13 @@ Moon-Classroom/
 │               └── moon_calculator.py  # Calculator script (used by Claude via Bash)
 ├── docs/
 │   ├── moon-phase.md               # This document
-│   └── screenshot.png
+│   ├── ai_friendly_docs.md         # Documentation standards for this project
+│   ├── screenshot.png              # Homepage screenshot
+│   └── screenshot-learn.png        # Learn page screenshot
+├── Dockerfile                      # Cloud Run container definition
+├── .dockerignore
+├── CLAUDE.md                       # Claude Code project guidance
+├── llms.txt                        # AI-optimized project summary
 └── requirements.txt
 ```
 

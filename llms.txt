@@ -1,0 +1,44 @@
+# Moon Classroom
+
+Moon Classroom is a Flask (Python) web application that teaches users about lunar phases. It runs on Python 3.9+ and has no database. All moon data is computed on request by a pure-Python calculator script.
+
+## Live deployment
+
+Hosted on Google Cloud Run: https://moon-classroom-561804284739.us-central1.run.app
+
+## Key files
+
+- `app.py` — Flask app. Three routes: `/` (homepage), `/learn` (education article), `/api/moon` (JSON API). Educational content is stored in two dictionaries: `PHASE_LESSONS` (keyed by phase name) and `MOON_FACTS` (list).
+- `scripts/moon_calculator.py` — CLI tool. Accepts an optional `YYYY-MM-DD` argument, defaults to today. Outputs JSON with phase name, emoji, illumination percent, age in days, direction, days to next new moon, and the next 4 upcoming phase milestones. Based on Jean Meeus' *Astronomical Algorithms* (2nd ed.).
+- `templates/index.html` — Homepage template. Sections: Tonight's Moon card, Date Explorer, Phase Lesson, Lunar Cycle Diagram, Moon Facts.
+- `templates/learn.html` — Three-section educational article: "Understanding Our Moon", "Moon Phases", "Apply Your Knowledge" (knowledge-check quiz). Embeds live moon data via a Jinja2 callout card.
+- `.claude/skills/moon-phase/SKILL.md` — Claude Code skill definition. Tells Claude when to invoke the calculator and how to structure lunar responses.
+- `docs/moon-phase.md` — Developer reference covering the skill architecture, calculator output schema, app routes, and field mapping.
+
+## API
+
+```
+GET /api/moon?date=YYYY-MM-DD
+```
+
+Returns JSON. The `date` parameter is optional and defaults to today.
+
+Response fields:
+- `phase` — float 0.0–1.0 (0 = new moon, 0.5 = full moon)
+- `phase_name` — string, one of: New Moon, Waxing Crescent, First Quarter, Waxing Gibbous, Full Moon, Waning Gibbous, Last Quarter, Waning Crescent
+- `emoji` — moon phase emoji character
+- `illumination` — float, percentage of the moon's disk that is lit (0–100)
+- `age` — float, days elapsed since the most recent new moon
+- `days_to_full` — integer, whole days until the next full moon (0 if currently full moon)
+- `upcoming_phases` — array of the next 4 milestone phase objects, each with `name`, `emoji`, `date`, `iso`, `time_utc`
+- `date` — string YYYY-MM-DD, the queried date
+- `lesson` — object with `description`, `visibility`, `science`, `cultural_note` for the current phase
+
+Error response: `{"error": "Invalid date format. Use YYYY-MM-DD."}` with HTTP 400.
+
+## Documentation index
+
+- `README.md` — Setup, features, API reference, moon-phase skill overview, stack
+- `docs/moon-phase.md` — Full developer reference: skill architecture, calculator schema, route details, field mapping, accuracy notes
+- `docs/ai_friendly_docs.md` — Documentation standards applied across this project
+- `CLAUDE.md` — Claude Code guidance: repo layout, conventions, running the app
