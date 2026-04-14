@@ -530,11 +530,12 @@
         <div class="learn-hero">
             <p class="section-label">Lunar Learning Guide</p>
             <h1 class="learn-hero-title">Understanding the Moon</h1>
-            <p class="learn-hero-sub">Three sections &nbsp;·&nbsp; ~15 minutes total &nbsp;·&nbsp; Knowledge check included</p>
+            <p class="learn-hero-sub">Four sections &nbsp;·&nbsp; ~20 minutes total &nbsp;·&nbsp; Knowledge check included</p>
             <nav class="learn-nav" aria-label="Jump to section">
                 <a href="#section-moon" class="learn-nav-pill" data-section="section-moon">① The Moon</a>
                 <a href="#section-phases" class="learn-nav-pill" data-section="section-phases">② Moon Phases</a>
-                <a href="#section-tasks" class="learn-nav-pill" data-section="section-tasks">③ Apply Your Knowledge</a>
+                <a href="#section-perspectives" class="learn-nav-pill" data-section="section-perspectives">③ Global Perspectives</a>
+                <a href="#section-tasks" class="learn-nav-pill" data-section="section-tasks">④ Apply Your Knowledge</a>
             </nav>
         </div>
 
@@ -730,12 +731,43 @@
         </section>
 
         <!-- ─────────────────────────────────────────── -->
-        <!-- SECTION 3: APPLY YOUR KNOWLEDGE            -->
+        <!-- SECTION 3: GLOBAL PERSPECTIVES             -->
+        <!-- ─────────────────────────────────────────── -->
+        <section id="section-perspectives" class="learn-section">
+            <article class="learn-article">
+                <div class="section-meta">
+                    <span class="section-number">Section 3</span>
+                    <span class="read-time">~3 minute read</span>
+                </div>
+                <h2>Does the Moon Look the Same from Everywhere on Earth?</h2>
+
+                <p>You might assume that everyone on Earth sees an identical Moon — after all, it is the same object in the same sky. The answer, perhaps surprisingly, is no. Where you stand on Earth significantly changes how the Moon appears, in three distinct ways. (<a href="https://www.livescience.com/space/the-moon/does-the-moon-look-the-same-from-everywhere-on-earth" target="_blank" rel="noopener noreferrer">Source: Live Science</a>)</p>
+
+                <h3>Orientation Flips Between Hemispheres</h3>
+
+                <p>The most dramatic difference is orientation. Because observers in the Northern and Southern hemispheres face opposite directions when looking at the Moon, the lunar disk appears rotated by roughly 180 degrees between the two. The iconic Tycho crater sits near the bottom of the Moon as seen from Earth's North Pole, but appears near the top when viewed from the South Pole. Observers in Wellington, New Zealand see the Moon oriented approximately 97 degrees counterclockwise compared to observers in Los Angeles.</p>
+
+                <h3>Phases Progress in Opposite Directions</h3>
+
+                <p>Moon phases also appear to sweep across the disk in opposite directions depending on which hemisphere you are in. In the Northern Hemisphere's temperate regions, the lit portion of the Moon grows and shrinks from right to left. South of the equator the progression is reversed. Near the equator, crescent moons appear nearly vertical — resembling a boat or a "smile" — rather than the tilted crescent shape familiar to observers at higher latitudes.</p>
+
+                <h3>The Moon Rotates Through the Night at the Equator</h3>
+
+                <p>At the equator, the Moon's face appears to rotate roughly 180 degrees between moonrise and moonset. This is not the Moon actually spinning — it happens because an equatorial observer must physically turn their body to track the Moon's steep arc overhead, changing their viewing angle dramatically. At higher latitudes, where the Moon's arc across the sky is lower and more oblique, this apparent rotation is far less pronounced.</p>
+
+                <div class="callout">
+                    <p><strong>The underlying cause:</strong> All three effects are a matter of perspective. Observers at different latitudes occupy fundamentally different vantage points relative to objects in space, so the same Moon can look strikingly different depending on where on the globe you are standing.</p>
+                </div>
+            </article>
+        </section>
+
+        <!-- ─────────────────────────────────────────── -->
+        <!-- SECTION 4: APPLY YOUR KNOWLEDGE            -->
         <!-- ─────────────────────────────────────────── -->
         <section id="section-tasks" class="learn-section">
             <article class="learn-article">
                 <div class="section-meta">
-                    <span class="section-number">Section 3</span>
+                    <span class="section-number">Section 4</span>
                     <span class="read-time">Knowledge check</span>
                 </div>
                 <h2>Apply Your Knowledge</h2>
@@ -903,7 +935,7 @@
         });
 
         // Highlight active section in nav pills
-        const sections = ['section-moon', 'section-phases', 'section-tasks'];
+        const sections = ['section-moon', 'section-phases', 'section-perspectives', 'section-tasks'];
         const pills = document.querySelectorAll('.learn-nav-pill');
 
         const observer = new IntersectionObserver((entries) => {
