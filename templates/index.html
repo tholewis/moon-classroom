@@ -11,15 +11,18 @@
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-    <div class="stars" id="stars"></div>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div class="stars" id="stars" aria-hidden="true"></div>
 
     <header class="site-header">
         <div class="header-content">
             <div class="logo">
-                <span class="logo-icon">☽</span>
-                <span class="logo-text">Moon Classroom</span>
+                <a href="/" class="logo-link">
+                    <span class="logo-icon" aria-hidden="true">☽</span>
+                    <span class="logo-text">Moon Classroom</span>
+                </a>
             </div>
-            <nav>
+            <nav aria-label="Main navigation">
                 <a href="#today" class="nav-link">Today</a>
                 <a href="#explorer" class="nav-link">Explorer</a>
                 <a href="#lesson" class="nav-link">Lesson</a>
@@ -29,14 +32,14 @@
         </div>
     </header>
 
-    <main>
+    <main id="main-content">
 
         <!-- Hero / Today Section -->
         <section id="today" class="section hero-section">
             <div class="section-inner">
                 <div class="hero-text">
                     <p class="section-label">Tonight's Sky</p>
-                    <h1 class="hero-title">{{ moon.emoji }} {{ moon.phase_name }}</h1>
+                    <h1 class="hero-title"><span aria-hidden="true">{{ moon.emoji }}</span> {{ moon.phase_name }}</h1>
                     <p class="hero-subtitle">{{ moon.illumination }}% illuminated · {{ moon.age }} days old</p>
                     {% if moon.days_to_full > 0.5 %}
                     <p class="days-to-full">Full moon in <strong>{{ moon.days_to_full }} days</strong></p>
@@ -44,8 +47,8 @@
                     <p class="days-to-full">It's <strong>full moon</strong> tonight!</p>
                     {% endif %}
                 </div>
-                <div class="moon-visual-wrapper">
-                    <div class="moon-glow"></div>
+                <div class="moon-visual-wrapper" role="img" aria-label="{{ moon.phase_name }}: {{ moon.illumination }}% illuminated">
+                    <div class="moon-glow" aria-hidden="true"></div>
                     <div class="moon-sphere" id="moon-sphere" data-phase="{{ moon.phase }}">
                         <div class="moon-surface"></div>
                         <div class="moon-shadow-overlay" id="shadow-overlay"></div>
@@ -65,10 +68,11 @@
                         <input type="date" id="date-input" value="{{ today }}" class="date-input">
                         <button id="explore-btn" type="button" class="btn-primary">Explore</button>
                     </div>
+                    <div aria-live="polite" aria-atomic="false" class="sr-only" id="explorer-status"></div>
                     <div id="explorer-result" class="explorer-result hidden">
-                        <div class="result-moon" id="result-moon-emoji"></div>
+                        <div class="result-moon" id="result-moon-emoji" aria-hidden="true"></div>
                         <div class="result-details">
-                            <h3 id="result-phase-name"></h3>
+                            <h3 id="result-phase-name" tabindex="-1"></h3>
                             <div class="result-stats">
                                 <div class="stat">
                                     <span class="stat-label">Illumination</span>
@@ -98,22 +102,22 @@
                 {% if lesson %}
                 <div class="lesson-grid">
                     <div class="lesson-card">
-                        <div class="lesson-icon">🔭</div>
+                        <div class="lesson-icon" aria-hidden="true">🔭</div>
                         <h3>What's Happening</h3>
                         <p>{{ lesson.description }}</p>
                     </div>
                     <div class="lesson-card">
-                        <div class="lesson-icon">👁</div>
+                        <div class="lesson-icon" aria-hidden="true">👁</div>
                         <h3>Visibility</h3>
                         <p>{{ lesson.visibility }}</p>
                     </div>
                     <div class="lesson-card">
-                        <div class="lesson-icon">⚗️</div>
+                        <div class="lesson-icon" aria-hidden="true">⚗️</div>
                         <h3>The Science</h3>
                         <p>{{ lesson.science }}</p>
                     </div>
                     <div class="lesson-card">
-                        <div class="lesson-icon">🌍</div>
+                        <div class="lesson-icon" aria-hidden="true">🌍</div>
                         <h3>Cultural Significance</h3>
                         <p>{{ lesson.cultural_note }}</p>
                     </div>
@@ -127,9 +131,9 @@
             <div class="section-inner">
                 <h2 class="section-title">The Lunar Cycle</h2>
                 <p class="section-desc">The Moon completes one full orbit around Earth every 29.5 days.</p>
-                <div class="cycle-diagram">
-                    <div class="cycle-ring"></div>
-                    <div class="cycle-center">Earth</div>
+                <div class="cycle-diagram" role="img" aria-label="Circular diagram of the 8 lunar phases orbiting Earth: New Moon, Waxing Crescent, First Quarter, Waxing Gibbous, Full Moon, Waning Gibbous, Last Quarter, Waning Crescent">
+                    <div class="cycle-ring" aria-hidden="true"></div>
+                    <div class="cycle-center" aria-hidden="true">Earth</div>
                     {% set phases = [
                         ("🌑", "New Moon", 0),
                         ("🌒", "Waxing Crescent", 45),
@@ -141,7 +145,7 @@
                         ("🌘", "Waning Crescent", 315)
                     ] %}
                     {% for emoji, name, deg in phases %}
-                    <div class="cycle-phase" data-deg="{{ deg }}"
+                    <div class="cycle-phase" data-deg="{{ deg }}" aria-hidden="true"
                          {% if name == moon.phase_name %}data-current="true"{% endif %}>
                         <div class="cycle-moon">{{ emoji }}</div>
                         <div class="cycle-label">{{ name }}</div>

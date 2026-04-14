@@ -483,6 +483,17 @@
             color: var(--moon-silver);
         }
 
+        .back-link:focus-visible {
+            outline: 2px solid var(--lunar-blue);
+            outline-offset: 2px;
+            border-radius: 2px;
+        }
+
+        .learn-nav-pill:focus-visible {
+            outline: 2px solid var(--lunar-blue);
+            outline-offset: 2px;
+        }
+
         @media (max-width: 768px) {
             .live-moon-card {
                 flex-direction: column;
@@ -504,18 +515,19 @@
     </style>
 </head>
 <body>
-    <div class="read-progress" id="read-progress"></div>
-    <div class="stars" id="stars"></div>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div class="read-progress" id="read-progress" aria-hidden="true"></div>
+    <div class="stars" id="stars" aria-hidden="true"></div>
 
     <header class="site-header">
         <div class="header-content">
             <div class="logo">
                 <a href="/" class="logo-link">
-                    <span class="logo-icon">☽</span>
+                    <span class="logo-icon" aria-hidden="true">☽</span>
                     <span class="logo-text">Moon Classroom</span>
                 </a>
             </div>
-            <nav>
+            <nav aria-label="Main navigation">
                 <a href="/#today" class="nav-link">Today</a>
                 <a href="/#explorer" class="nav-link">Explorer</a>
                 <a href="/#lesson" class="nav-link">Lesson</a>
@@ -525,7 +537,7 @@
         </div>
     </header>
 
-    <main>
+    <main id="main-content">
         <!-- Hero -->
         <div class="learn-hero">
             <p class="section-label">Lunar Learning Guide</p>
@@ -640,7 +652,7 @@
 
                 <!-- Live moon data callout -->
                 <div class="live-moon-card">
-                    <div class="live-moon-emoji">{{ moon.emoji }}</div>
+                    <div class="live-moon-emoji" aria-hidden="true">{{ moon.emoji }}</div>
                     <div class="live-moon-info">
                         <span class="live-badge">Live · Tonight</span>
                         <div class="live-moon-phase">{{ moon.phase_name }}</div>
@@ -683,7 +695,7 @@
                     ] %}
                     {% for emoji, name, desc, idx in phases_data %}
                     <div class="phase-card {% if name == moon.phase_name %}current-phase{% endif %}">
-                        <span class="phase-card-emoji">{{ emoji }}</span>
+                        <span class="phase-card-emoji" aria-hidden="true">{{ emoji }}</span>
                         <div class="phase-card-name">{{ name }}</div>
                         <div class="phase-card-desc">{{ desc }}</div>
                         {% if name == moon.phase_name %}
@@ -709,11 +721,11 @@
 
                 <div class="tide-comparison">
                     <div class="tide-card">
-                        <div class="tide-card-title">🌕 🌑 Spring Tides</div>
+                        <div class="tide-card-title"><span aria-hidden="true">🌕 🌑</span> Spring Tides</div>
                         <p>Occur at <strong>New Moon and Full Moon</strong>, when Earth, Moon, and Sun are roughly aligned. The gravitational pulls of the Moon and Sun reinforce each other, producing higher high tides and lower low tides than average.</p>
                     </div>
                     <div class="tide-card">
-                        <div class="tide-card-title">🌓 🌗 Neap Tides</div>
+                        <div class="tide-card-title"><span aria-hidden="true">🌓 🌗</span> Neap Tides</div>
                         <p>Occur at <strong>First Quarter and Last Quarter</strong>, when the Sun and Moon are at right angles relative to Earth. Their gravitational pulls partially cancel, resulting in a smaller tidal range — shallower highs and higher lows.</p>
                     </div>
                 </div>
@@ -741,7 +753,7 @@
                 </div>
                 <h2>Does the Moon Look the Same from Everywhere on Earth?</h2>
 
-                <p>You might assume that everyone on Earth sees an identical Moon — after all, it is the same object in the same sky. The answer, perhaps surprisingly, is no. Where you stand on Earth significantly changes how the Moon appears, in three distinct ways. (<a href="https://www.livescience.com/space/the-moon/does-the-moon-look-the-same-from-everywhere-on-earth" target="_blank" rel="noopener noreferrer">Source: Live Science</a>)</p>
+                <p>You might assume that everyone on Earth sees an identical Moon — after all, it is the same object in the same sky. The answer, perhaps surprisingly, is no. Where you stand on Earth significantly changes how the Moon appears, in three distinct ways. (<a href="https://www.livescience.com/space/the-moon/does-the-moon-look-the-same-from-everywhere-on-earth" target="_blank" rel="noopener noreferrer">Source: Live Science<span class="sr-only"> (opens in new tab)</span></a>)</p>
 
                 <h3>Orientation Flips Between Hemispheres</h3>
 
@@ -779,120 +791,120 @@
                 <div class="task-list">
 
                     <div class="task-item">
-                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                        <div class="task-header" id="task-header-1" role="button" aria-expanded="false" aria-controls="task-answer-1" tabindex="0">
                             <span class="task-number">01</span>
                             <span class="task-question">What is the scientific theory that explains how the Moon formed, and what evidence supports it?</span>
-                            <span class="task-toggle">▾</span>
+                            <span class="task-toggle" aria-hidden="true">▾</span>
                         </div>
-                        <div class="task-answer">
+                        <div class="task-answer" id="task-answer-1">
                             <div class="answer-label">Answer</div>
                             <p>The <strong>Giant Impact Hypothesis</strong>: approximately 4.5 billion years ago, a Mars-sized body called Theia collided with the early Earth. The collision ejected vast amounts of molten material into orbit, which coalesced into the Moon. The strongest evidence comes from lunar rocks returned by the Apollo missions — the Moon's oxygen isotope ratios almost exactly match Earth's, indicating both bodies formed from the same pool of material.</p>
                         </div>
                     </div>
 
                     <div class="task-item">
-                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                        <div class="task-header" id="task-header-2" role="button" aria-expanded="false" aria-controls="task-answer-2" tabindex="0">
                             <span class="task-number">02</span>
                             <span class="task-question">The Moon's orbital period is 27.3 days, but the lunar cycle (new moon to new moon) takes 29.5 days. Why is there a difference?</span>
-                            <span class="task-toggle">▾</span>
+                            <span class="task-toggle" aria-hidden="true">▾</span>
                         </div>
-                        <div class="task-answer">
+                        <div class="task-answer" id="task-answer-2">
                             <div class="answer-label">Answer</div>
                             <p>Because <strong>Earth is also orbiting the Sun</strong>. By the time the Moon completes one full orbit around Earth (27.3 days), Earth has moved roughly 30 degrees further along its own orbit. The Moon must travel that additional distance before it lines up with Earth and the Sun in the same way again — which is what determines the phase we see. This extra ~2.2 days gives us the 29.5-day synodic month.</p>
                         </div>
                     </div>
 
                     <div class="task-item">
-                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                        <div class="task-header" id="task-header-3" role="button" aria-expanded="false" aria-controls="task-answer-3" tabindex="0">
                             <span class="task-number">03</span>
                             <span class="task-question">True or false: The far side of the Moon ("the dark side") never receives sunlight.</span>
-                            <span class="task-toggle">▾</span>
+                            <span class="task-toggle" aria-hidden="true">▾</span>
                         </div>
-                        <div class="task-answer">
+                        <div class="task-answer" id="task-answer-3">
                             <div class="answer-label">Answer</div>
                             <p><strong>False.</strong> "Dark side" is a popular but misleading name. The far side receives exactly as much sunlight as the near side — it simply always faces away from Earth. It is permanently <em>unseen</em> from Earth's surface, not permanently dark. The Luna 3 spacecraft first photographed it in 1959.</p>
                         </div>
                     </div>
 
                     <div class="task-item">
-                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                        <div class="task-header" id="task-header-4" role="button" aria-expanded="false" aria-controls="task-answer-4" tabindex="0">
                             <span class="task-number">04</span>
                             <span class="task-question">What is tidal locking? Use the Moon as your example and describe what it means for an observer on Earth.</span>
-                            <span class="task-toggle">▾</span>
+                            <span class="task-toggle" aria-hidden="true">▾</span>
                         </div>
-                        <div class="task-answer">
+                        <div class="task-answer" id="task-answer-4">
                             <div class="answer-label">Answer</div>
                             <p><strong>Tidal locking</strong> occurs when a body's rotation period is slowed by gravitational friction until it equals its orbital period. Earth's gravity gradually slowed the Moon's spin over millions of years. Now the Moon rotates once every 27.3 days — exactly its orbital period — so the same hemisphere always faces Earth. From Earth's surface, we can only directly observe about 59% of the Moon's total surface (slightly more than 50% due to orbital wobbling called libration).</p>
                         </div>
                     </div>
 
                     <div class="task-item">
-                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                        <div class="task-header" id="task-header-5" role="button" aria-expanded="false" aria-controls="task-answer-5" tabindex="0">
                             <span class="task-number">05</span>
                             <span class="task-question">During which two moon phases do spring tides occur, and why are they stronger than neap tides?</span>
-                            <span class="task-toggle">▾</span>
+                            <span class="task-toggle" aria-hidden="true">▾</span>
                         </div>
-                        <div class="task-answer">
+                        <div class="task-answer" id="task-answer-5">
                             <div class="answer-label">Answer</div>
                             <p>Spring tides occur at the <strong>New Moon and Full Moon</strong>. At these phases, the Sun, Earth, and Moon are roughly aligned, so the gravitational pull of the Sun and Moon act in the same direction and <strong>reinforce each other</strong>, producing higher high tides and lower low tides. At the quarter phases, the Sun and Moon are at right angles to each other relative to Earth, so their pulls partially cancel out — producing the weaker neap tides.</p>
                         </div>
                     </div>
 
                     <div class="task-item">
-                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                        <div class="task-header" id="task-header-6" role="button" aria-expanded="false" aria-controls="task-answer-6" tabindex="0">
                             <span class="task-number">06</span>
                             <span class="task-question">The Moon's illumination is approximately 50% and the right half is lit (as seen from the northern hemisphere). The lit portion has been growing for the past week. What is the phase name, and when does this Moon set?</span>
-                            <span class="task-toggle">▾</span>
+                            <span class="task-toggle" aria-hidden="true">▾</span>
                         </div>
-                        <div class="task-answer">
+                        <div class="task-answer" id="task-answer-6">
                             <div class="answer-label">Answer</div>
                             <p><strong>First Quarter</strong> (also called "half moon"). The name refers to the Moon being one quarter of the way through its orbit from New Moon — not to the fraction illuminated. Because the Moon is waxing (illumination growing), the right half is lit in the northern hemisphere. The First Quarter Moon is typically <strong>high in the sky at sunset and sets near midnight</strong>.</p>
                         </div>
                     </div>
 
                     <div class="task-item">
-                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                        <div class="task-header" id="task-header-7" role="button" aria-expanded="false" aria-controls="task-answer-7" tabindex="0">
                             <span class="task-number">07</span>
                             <span class="task-question">Why is the First or Last Quarter Moon — not the Full Moon — considered the best time to observe lunar craters through a telescope?</span>
-                            <span class="task-toggle">▾</span>
+                            <span class="task-toggle" aria-hidden="true">▾</span>
                         </div>
-                        <div class="task-answer">
+                        <div class="task-answer" id="task-answer-7">
                             <div class="answer-label">Answer</div>
                             <p>At the quarter phases, the <strong>terminator</strong> (the boundary between lit and unlit portions) runs across the surface, and sunlight strikes features at a very shallow angle. This creates long shadows that dramatically reveal the rims, walls, and floors of craters. At Full Moon, the Sun shines almost directly down from above; there are few shadows and the surface appears flat and washed out — beautiful, but poor for detail. The terminator is also perfectly straight at the quarter phases, making it easy to identify.</p>
                         </div>
                     </div>
 
                     <div class="task-item">
-                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                        <div class="task-header" id="task-header-8" role="button" aria-expanded="false" aria-controls="task-answer-8" tabindex="0">
                             <span class="task-number">08</span>
                             <span class="task-question">What causes the reddish colour of the Moon during a total lunar eclipse?</span>
-                            <span class="task-toggle">▾</span>
+                            <span class="task-toggle" aria-hidden="true">▾</span>
                         </div>
-                        <div class="task-answer">
+                        <div class="task-answer" id="task-answer-8">
                             <div class="answer-label">Answer</div>
                             <p>During a total lunar eclipse, Earth's atmosphere acts like a lens, <strong>refracting sunlight around the edge of Earth</strong> and onto the Moon. The atmosphere scatters away shorter blue wavelengths (the same process that makes the sky blue) and allows longer red and orange wavelengths to bend through and illuminate the Moon. This is essentially the combined light of all of Earth's sunrises and sunsets projected onto the lunar surface — the same optical effect that makes the horizon glow red at dawn and dusk.</p>
                         </div>
                     </div>
 
                     <div class="task-item">
-                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                        <div class="task-header" id="task-header-9" role="button" aria-expanded="false" aria-controls="task-answer-9" tabindex="0">
                             <span class="task-number">09</span>
                             <span class="task-question">You step outside just after sunset and see a crescent moon low in the western sky with the lit portion on the right side. Is the Moon waxing or waning? What is the phase name, and will the Moon be visible tomorrow night at the same time?</span>
-                            <span class="task-toggle">▾</span>
+                            <span class="task-toggle" aria-hidden="true">▾</span>
                         </div>
-                        <div class="task-answer">
+                        <div class="task-answer" id="task-answer-9">
                             <div class="answer-label">Answer</div>
                             <p>The Moon is <strong>waxing</strong> — the lit right-side crescent in the western sky after sunset is a classic <strong>Waxing Crescent</strong>. The Moon will <strong>yes</strong> be visible tomorrow night at the same time, and it will be slightly larger and higher in the sky as it continues growing toward First Quarter. A waning crescent, by contrast, would rise in the east before dawn and would not be visible in the western sky after sunset.</p>
                         </div>
                     </div>
 
                     <div class="task-item">
-                        <div class="task-header" role="button" aria-expanded="false" tabindex="0">
+                        <div class="task-header" id="task-header-10" role="button" aria-expanded="false" aria-controls="task-answer-10" tabindex="0">
                             <span class="task-number">10</span>
                             <span class="task-question">Look at tonight's live moon data shown in Section 2. Based on the phase name displayed, predict whether tomorrow's illumination percentage will be higher or lower than tonight's, and explain why.</span>
-                            <span class="task-toggle">▾</span>
+                            <span class="task-toggle" aria-hidden="true">▾</span>
                         </div>
-                        <div class="task-answer">
+                        <div class="task-answer" id="task-answer-10">
                             <div class="answer-label">Answer</div>
                             <p>
                                 {% if moon.phase_name in ["New Moon", "Waxing Crescent", "First Quarter", "Waxing Gibbous"] %}
@@ -910,7 +922,7 @@
                 </div>
 
                 <div class="completion-banner">
-                    <span class="big-emoji">🌕</span>
+                    <span class="big-emoji" aria-hidden="true">🌕</span>
                     <h3>You have completed the Lunar Learning Guide</h3>
                     <p>Return to the homepage to see tonight's live phase data, explore the date explorer, or revisit the phase cycle diagram.</p>
                     <br>

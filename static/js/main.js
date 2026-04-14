@@ -79,7 +79,8 @@ document.getElementById('explore-btn').addEventListener('click', async () => {
     const data = await res.json();
 
     document.getElementById('result-moon-emoji').textContent = data.emoji;
-    document.getElementById('result-phase-name').textContent = data.phase_name;
+    const phaseName = document.getElementById('result-phase-name');
+    phaseName.textContent = data.phase_name;
     document.getElementById('result-illumination').textContent = `${data.illumination}%`;
     document.getElementById('result-age').textContent = `${data.age} days`;
     document.getElementById('result-days-to-full').textContent =
@@ -96,6 +97,11 @@ document.getElementById('explore-btn').addEventListener('click', async () => {
     const result = document.getElementById('explorer-result');
     result.classList.remove('hidden');
     result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Announce result to screen readers and move keyboard focus
+    const status = document.getElementById('explorer-status');
+    if (status) status.textContent = `Results loaded: ${data.phase_name}, ${data.illumination}% illuminated.`;
+    phaseName.focus();
   } catch (e) {
     console.error(e);
     const result = document.getElementById('explorer-result');
@@ -104,6 +110,8 @@ document.getElementById('explore-btn').addEventListener('click', async () => {
     desc.textContent = 'Something went wrong. Please try again.';
     desc.style.display = 'block';
     result.classList.remove('hidden');
+    const status = document.getElementById('explorer-status');
+    if (status) status.textContent = 'Error: could not load moon data. Please try again.';
   } finally {
     btn.textContent = 'Explore';
     btn.disabled = false;

@@ -53,6 +53,31 @@ python app.py
 - The calculator exists in two locations intentionally — one for the app (`scripts/`), one for the Claude skill (`.claude/skills/moon-phase/scripts/`). Keep them in sync when making algorithm changes.
 - The app runs on port 5050 locally and port 8080 in the Docker container (Cloud Run).
 
+## Pre-deployment checklist
+
+Before pushing changes to GitHub or deploying to the Google Cloud website, complete all three checks:
+
+1. **Security check** — Review all changed files for:
+   - No hardcoded secrets, API keys, tokens, or credentials
+   - No new user-input paths that could introduce injection vulnerabilities (SQL, shell, XSS)
+   - No new external URLs or third-party dependencies added without review
+   - `.dockerignore` and `.gitignore` cover any sensitive local files
+
+2. **Accessibility check** — Verify the UI meets WCAG 2.1 AA standards:
+   - All interactive elements have visible focus indicators
+   - Decorative images and emojis have `aria-hidden="true"`
+   - Dynamic content updates are announced via `aria-live` regions
+   - Color contrast meets 4.5:1 for normal text and 3:1 for large text
+   - All form inputs have associated labels
+   - Animations respect `prefers-reduced-motion`
+
+3. **No secrets shared** — Confirm that no files staged for commit contain:
+   - Private keys, certificates, or `.env` files
+   - Credentials or tokens in source code or config files
+   - Personal data or internal infrastructure details
+
+Only proceed with `git push` / `gcloud run deploy` after all three checks pass.
+
 ## Documentation standards
 
 All documentation in this project follows the standards in `docs/ai_friendly_docs.md`. When creating or editing docs:

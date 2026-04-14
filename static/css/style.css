@@ -11,6 +11,26 @@
   border: 0;
 }
 
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--cosmos);
+  color: var(--lunar-blue);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: 2px solid var(--lunar-blue);
+  border-radius: 0 0 8px 8px;
+  text-decoration: none;
+  z-index: 1000;
+  transition: top 0.2s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
 /* ───── Reset & Base ───── */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -31,7 +51,7 @@
   --lunar-purple: #9c7fe3;
   --text-primary: #e8eaed;
   --text-secondary: #9aa5b4;
-  --text-dim: #5a6578;
+  --text-dim: #767f8f;
   --card-bg: rgba(255,255,255,0.04);
   --card-border: rgba(255,255,255,0.08);
   --glow-soft: rgba(200, 214, 229, 0.15);
@@ -126,6 +146,12 @@ nav {
 
 .nav-link:hover {
   color: var(--moon-silver);
+}
+
+.nav-link:focus-visible {
+  outline: 2px solid var(--lunar-blue);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 .nav-link-active {
@@ -313,7 +339,7 @@ main {
 
 .date-input:focus {
   border-color: var(--lunar-blue);
-  box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.15);
+  box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.35);
 }
 
 .btn-primary {
@@ -333,6 +359,11 @@ main {
 .btn-primary:hover {
   background: rgba(79, 195, 247, 0.2);
   box-shadow: 0 0 20px rgba(79, 195, 247, 0.15);
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid var(--lunar-blue);
+  outline-offset: 2px;
 }
 
 .explorer-result {
@@ -587,5 +618,20 @@ main {
       rotate(var(--deg))
       translateY(-120px)
       rotate(calc(-1 * var(--deg)));
+  }
+}
+
+/* ───── Reduced Motion ───── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  html {
+    scroll-behavior: auto;
   }
 }
